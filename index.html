@@ -3,126 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的个人网站</title>
+  <title>小天的网站</title>
+  <style>
+    .accordion-content {
+      display: none;
+    }
+  </style>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      const accordionHeaders = document.querySelectorAll('.accordion-header');
+      
+      accordionHeaders.forEach(function(header) {
+        header.addEventListener('click', function() {
+          this.classList.toggle('active');
+          const content = this.nextElementSibling;
+          if (content.style.display === 'block') {
+            content.style.display = 'none';
+          } else {
+            content.style.display = 'block';
+          }
+        });
+      });
+    });
+  </script>
 </head>
 <body>
-  <header>
-    <h1 style="background-color:red">小天的个人网站</h1>
-    <nav>
-      <ul>
-        <li><a href="https://flowus.cn/yixiaotiandi/share/31fe03bd-de53-4bc7-98dd-cffd3de02549" rel="noopener noreferrer">个人资源网站</a></li>
-        <hr>
-        <h2 style="background-color:green">01综合书站</h2>
-          <li><a href="https://looks.wang/" target="_blank" rel="noopener noreferrer">Zlibrary</a></li>
-          <li><a href="https://c.aalib.net/tool/libgen/" target="_blank" rel="noopener noreferrer">Library Genesis</a></li>
-          <li><a href="https://zh.annas-archive.gs/" target="_blank" rel="noopener noreferrer">安娜的档案</a></li>
-        <hr>
-        <h2 style="background-color:green">02电子教材</h2>
-          <li><a href="https://ebook.hep.com.cn/" target="_blank" rel="noopener noreferrer">高教书苑</a></li>
-          <li><a href="http://www.dxsx.net/" target="_blank" rel="noopener noreferrer">大学数学网</a></li>
-          <li><a href="http://www.dzkbw.com/" target="_blank" rel="noopener noreferrer">电子课本网</a></li>
-        <hr>
-        <h2 style="background-color:green">03阅读书站</h2>
-          <li><a href="https://ibooks.org.cn/" target="_blank" rel="noopener noreferrer">读书小站</a></li>
-          <li><a href="https://www.book123.info/" target="_blank" rel="noopener noreferrer">无名图书</a></li>
-          <li><a href="https://www.nmod.net/" target="_blank" rel="noopener noreferrer">NMOD</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <h2>欢迎访问我的个人网站</h2>
-    <p>这是小天的个人网站，你可以在这里找到各种资源和书籍。</p>
-    <a href="./images/森林灭火.png" download>下载测试图片</a>
-  </main>
-  <footer>
-    <p>联系方式：邮箱：1041900576@qq.com</p>
-  </footer>
+  <p>Hello 大家好</p>
+  <p>我是小天，这是我的个人网站。 </p>
+  <p>很高兴你来到这里, 你可以在我的个人公众号：一小天地里找到我</p>
+  <p>以下为折叠页面，点击可展开查看</p>
 
-<style>
-.button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-</style>
-</head>
-<body>
+  <div class="accordion">
+    <div class="accordion-header">电子书</div>
+    <div class="accordion-content">
+      
+      <div class="accordion-header">综合书站</div>
+      <div class="accordion-content">
+        <li> <a href="https://looks.wang/" target="_blank" rel="noopener noreferrer">Zlibrary</a> </li>
+        <li> <a href="https://c.aalib.net/tool/libgen/" target="_blank" rel="noopener noreferrer">Library Genesis</a> </li>
+        <li> <a href="https://zh.annas-archive.gs/" target="_blank" rel="noopener noreferrer">安娜的档案</a> </li>
+      </div>
+      
+      <div class="accordion-header">电子教材</div>
+      <div class="accordion-content">
+        <li> <a href="https://ebook.hep.com.cn/" target="_blank" rel="noopener noreferrer">高教书苑</a> </li>
+        <li> <a href="http://www.dxsx.net/" target="_blank" rel="noopener noreferrer">大学数学网</a> </li>
+        <li> <a href="http://www.dzkbw.com/" target="_blank" rel="noopener noreferrera">电子课本网</a> </li>
+      </div>
+      
+      <div class="accordion-header">阅读书站</div>
+      <div class="accordion-content">
+        <li> <a href="https://ibooks.org.cn/" target="_blank" rel="noopener noreferrer">读书小站</a> </li>
+        <li> <a href="https://www.book123.info/" target="_blank" rel="noopener noreferrer">无名图书</a> </li>
+        <li> <a href="https://www.nmod.net/" target="_blank" rel="noopener noreferrer">NMOD</a> </li>
+      </div>
+    </div>
 
-<h1>公众号文章</h1>
-
-<button>点击按钮跳转相应文章</button>
-<a href="https://mp.weixin.qq.com/s/Wrd_h5ablxX3xG7ACx3qbQ" class="button" target="_blank" rel="noopener noreferrer">找电子书</a>
-<a href="https://mp.weixin.qq.com/s/aoHfxuUCiZ02eq0dYhD4ug" class="button" target="_blank" rel="noopener noreferrer">免费观影</a>
-<a href="https://mp.weixin.qq.com/s/oyaTlaB4CPkxCaYUn8Fa0A" class="button" target="_blank" rel="noopener noreferrer">学习资源</a>
-
-  <head>
-<style>
-.dropbtn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
-}
-</style>
-</head>
-<body>
-
-<h1>公众号分享的资源</h1>
-
-<p>请把鼠标移到按钮上，以打开下拉菜单，</p>
-
-<div class="dropdown">
-  <button class="dropbtn">Dropdown</button>
-  <div class="dropdown-content">
-  <a href="https://mp.weixin.qq.com/s/0GWd22e3RRb6tCNoHEXXtQ" target="_blank" rel="noopener noreferrer">PPT模板</a>
-  <a href="https://mp.weixin.qq.com/s/B9X3e3vGJ_QbIy4nyyuTHg" target="_blank" rel="noopener noreferrer">英语四六级</a>
-  <a href="https://mp.weixin.qq.com/s/OcxSSZXiPoMhIrD8ujPkng" target="_blank" rel="noopener noreferrer">数学竞赛</a>
+    <div class="accordion-header">学习资源</div>
+      <div class="accordion-content">
+        <li> <a href="https://www.icourse163.org/" target="_blank" rel="noopener noreferrer">中国大学MOOC</a> </li>
+        <li> <a href="https://tuostudy.com" target="_blank" rel="noopener noreferrer">图欧学习资源库</a> </li>
+        <li> <a href="https://zhenti.burningvocabulary.com" target="_blank" rel="noopener noreferrer">英语真题在线</a> </li>
+        <li> <a href="https://www.geogebra.org/" target="_blank" rel="noopener noreferrer">GeoGebra</a> </li>
+        <li> <a href="https://www.runoob.com/" target="_blank" rel="noopener noreferrer">菜鸟教程</a> </li>
+        <li> <a href="http://oeasy.org" target="_blank" rel="noopener noreferrer">Oeasy教程</a> </li>
+        <li> <a href="https://www.gushiwen.cn/" target="_blank" rel="noopener noreferrer">古诗文网</a> </li>
+      </div>
+      
+      <div class="accordion-header">免费观影</div>
+      <div class="accordion-content">
+        <li> <a href="https://xn--p3tv7h.com/" target="_blank" rel="noopener noreferrer">影搜</a> </li>
+        <li> <a href="http://feijisu20.com/" target="_blank" rel="noopener noreferrer">飞极速在线</a> </li>
+        <li> <a href="https://tv.cctv.com/" target="_blank" rel="noopener noreferrer">CCTV</a> </li>
+        <li> <a href="https://www.gjw4.com/" target="_blank" rel="noopener noreferrer">港剧发烧友</a> </li>
+        <li> <a href="https://dilidili.online/" target="_blank" rel="noopener noreferrer">嘀哩嘀哩</a> </li>
+      </div>
+      
+      <div class="accordion-header">论文查重</div>
+      <div class="accordion-content">
+        <li> <a href="https://dsa.dayainfo.com/" target="_blank" rel="noopener noreferrer">超星大雅相似</a> </li>
+        <li> <a href="https://www.paperday.cn/" target="_blank" rel="noopener noreferrer">PaperDay</a> </li>
+        <li> <a href="https://www.freecheck.cn/" target="_blank" rel="noopener noreferrer">FreeCheck</a> </li>
+        <li> <a href="https://check.lunwengo.net/" target="_blank" rel="noopener noreferrer">论文狗</a> </li>
+        <li> <a href="https://www.paperfree.cn/" target="_blank" rel="noopener noreferrer">PaperFree</a> </li>
+        <li> <a href="http://www.papertime.cn/" target="_blank" rel="noopener noreferrer">PaperTime</a> </li>
+      </div>
+    </div>
+    
   </div>
-</div>
-
-</body>
-
-
-<h1 style="background-color:red">感谢阅读</h1>
+  <link href="./zhedie.css" rel="stylesheet" type="text/css"/>
 </body>
 </html>
