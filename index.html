@@ -4,37 +4,84 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>小天的网站</title>
+  <link href="style02.css" rel="stylesheet" type="text/css">
   <style>
     .accordion-content {
       display: none;
     }
   </style>
   <script>
-    window.addEventListener('DOMContentLoaded', function() {
-      const accordionHeaders = document.querySelectorAll('.accordion-header');
-      
-      accordionHeaders.forEach(function(header) {
-        header.addEventListener('click', function() {
-          this.classList.toggle('active');
-          const content = this.nextElementSibling;
-          if (content.style.display === 'block') {
-            content.style.display = 'none';
-          } else {
-            content.style.display = 'block';
-          }
-        });
-      });
+document.addEventListener('DOMContentLoaded', function() {
+  // 获取页面内容
+  var pageContent = document.body.innerText;
+
+  // 获取搜索输入框和搜索结果元素
+  var searchInput = document.getElementById('searchInput');
+  var searchResults = document.getElementById('searchResults');
+
+  // 监听搜索输入框的输入事件
+  searchInput.addEventListener('input', function() {
+    // 获取用户输入的关键词
+    var keyword = this.value.trim();
+
+    // 清空搜索结果
+    searchResults.innerHTML = '';
+
+    // 如果关键词为空，不执行搜索逻辑
+    if (keyword === '') return;
+
+    // 构建正则表达式，并进行搜索
+    var regex = new RegExp(keyword, 'gi');
+    var match;
+    var startIndex = 0;
+
+    while ((match = regex.exec(pageContent)) !== null) {
+      // 创建匹配结果的DOM元素
+      var resultElement = document.createElement('div');
+      resultElement.textContent = match[0];
+
+      // 高亮匹配的文本
+      var highlightedText = resultElement.innerHTML.replace(match[0], '<span class="highlight">' + match[0] + '</span>');
+      resultElement.innerHTML = highlightedText;
+
+      // 添加匹配结果到搜索结果容器
+      searchResults.appendChild(resultElement);
+
+      // 更新正则表达式的起始位置，以继续搜索下一个匹配项
+      startIndex = match.index + 1;
+      regex.lastIndex = startIndex;
+    }
+  });
+
+  // 获取折叠列表的所有标题元素
+  var accordionHeaders = document.querySelectorAll('.accordion-header');
+
+  // 遍历标题元素并添加点击事件处理函数
+  accordionHeaders.forEach(function(header) {
+    header.addEventListener('click', function() {
+      this.classList.toggle('active');
+      var content = this.nextElementSibling;
+      if (content.style.display === 'block') {
+        content.style.display = 'none';
+      } else {
+        content.style.display = 'block';
+      }
     });
+  });
+});
+
   </script>
 </head>
 <body>
+    <input type="text" id="searchInput" placeholder="输入关键词搜索">
+    <div id="searchResults"></div>
   <p>Hello 大家好</p>
   <p>我是小天，这是我的个人网站。 </p>
   <p>很高兴你来到这里, 你可以在我的个人公众号：一小天地里找到我</p>
   <p>以下为折叠页面，点击可展开查看</p>
 
   <div class="accordion">
-    <div class="accordion-header">电子书</div>
+    <div class="accordion-header">电子书籍</div>
     <div class="accordion-content">
       
       <div class="accordion-header">综合书站</div>
@@ -56,6 +103,35 @@
         <li> <a href="https://ibooks.org.cn/" target="_blank" rel="noopener noreferrer">读书小站</a> </li>
         <li> <a href="https://www.book123.info/" target="_blank" rel="noopener noreferrer">无名图书</a> </li>
         <li> <a href="https://www.nmod.net/" target="_blank" rel="noopener noreferrer">NMOD</a> </li>
+      </div>
+    </div>
+
+    <div class="accordion-header">网盘资源</div>
+    <div class="accordion-content">
+      
+      <div class="accordion-header">聚合网盘</div>
+      <div class="accordion-content">
+        <li> <a href="https://pan.qianfan.app/" target="_blank" rel="noopener noreferrer">千帆搜索</a> </li>
+        <li> <a href="https://yiso.fun/" target="_blank" rel="noopener noreferrer">易搜</a> </li>
+        <li> <a href="https://www.iizhi.cn/" target="_blank" rel="noopener noreferrer">毕方铺</a> </li>
+      </div>
+      
+      <div class="accordion-header">阿里云盘</div>
+      <div class="accordion-content">
+        <li> <a href="https://www.upyunso.com/" target="_blank" rel="noopener noreferrer">UP云搜</a> </li>
+        <li> <a href="https://www.niceso.net/" target="_blank" rel="noopener noreferrer">奈斯搜索</a> </li>
+        <li> <a href="https://ali.gitcafe.ink/" target="_blank" rel="noopener noreferrera">小纸条</a> </li>
+      </div>
+      
+      <div class="accordion-header">城通网盘</div>
+      <div class="accordion-content">
+        <li> <a href="http://ct.vpan123.com/" target="_blank" rel="noopener noreferrer">城通资源分享站</a> </li>
+      </div>
+
+      <div class="accordion-header">论坛网盘</div>
+      <div class="accordion-content">
+        <li> <a href="https://drivebbs.com/" target="_blank" rel="noopener noreferrer">阿里云盘资源分享</a> </li>
+        <li> <a href="https://aliwp.cn/" target="_blank" rel="noopener noreferrer">网盘资源分享</a> </li>
       </div>
     </div>
 
