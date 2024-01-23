@@ -10,7 +10,7 @@
     text-align: left;
     transition: 0.4s;
     }
-    .accordion .accordion-header.active, .accordion .accordion-header:hover {
+.accordion .accordion-header.active, .accordion .accordion-header:hover {
     background-color: #ddd;
     }
     .accordion .accordion-content {
@@ -22,6 +22,14 @@
     font-size: 16px;
     text-align: left;
     }
-    .accordion .accordion-header.active + .accordion-content {
+.accordion .accordion-header.active + .accordion-content {
     display: block;
     }
+
+#container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* 增加间距 */
+      }
+      
