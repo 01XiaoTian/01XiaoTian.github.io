@@ -1,64 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Example Page</title>
+    <title>阿坑科技 - 科技网站导航</title>
+        <div class="content">
+        <p>This is a separate page on your website. Here you can add any content you like!</p>
+        <p>Feel free to explore more pages.</p>
+        <a href="index.html">Go Back to Home</a>
+        </div>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff;
-            color: #333;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
         }
         header {
-            background-color: #4CAF50;
+            background-color: #0f3460;
             width: 100%;
-            padding: 15px;
-            text-align: center;
-            color: white;
-        }
-        h1 {
-            margin: 0;
-        }
-        .content {
-            max-width: 800px;
             padding: 20px;
             text-align: center;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #e94560;
+        }
+        section {
+            width: 80%;
+            margin: 20px 0;
+        }
+        .category {
+            background-color: #16213e;
+            padding: 15px;
+            margin-bottom: 10px;
             border-radius: 5px;
-            transition: background-color 0.3s;
         }
-        a:hover {
-            background-color: #45a049;
+        .category h2 {
+            margin: 0;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #03dac6;
+        }
+        .links {
+            margin-top: 10px;
+            padding-left: 15px;
+            display: none;
+        }
+        .links a {
+            display: block;
+            color: #03dac6;
+            text-decoration: none;
+            font-size: 1.2em;
+            margin: 5px 0;
+            transition: color 0.3s ease;
+        }
+        .links a:hover {
+            color: #e94560;
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            background-color: #0f3460;
+            width: 100%;
+            text-align: center;
+            color: #808080;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to the Example Page</h1>
+        <h1>阿坑科技</h1>
+        <p>汇聚科技资源，助你探索未来</p>
     </header>
-    <div class="content">
-        <p>This is a separate page on your website. Here you can add any content you like!</p>
-        <p>Feel free to explore more pages.</p>
-        <a href="index.html">Go Back to Home</a>
-    </div>
+    <section>
+        <div class="category">
+            <h2 onclick="toggleLinks('coding')">编程与开发工具</h2>
+            <div class="links" id="coding">
+                <a href="https://www.github.com" target="_blank">GitHub - 代码托管平台</a>
+                <a href="https://www.stackoverflow.com" target="_blank">Stack Overflow - 编程问答社区</a>
+                <a href="https://www.gitlab.com" target="_blank">GitLab - 代码管理平台</a>
+            </div>
+        </div>
+        <div class="category">
+            <h2 onclick="toggleLinks('techNews')">科技新闻</h2>
+            <div class="links" id="techNews">
+                <a href="https://www.techcrunch.com" target="_blank">TechCrunch - 科技新闻</a>
+                <a href="https://www.theverge.com" target="_blank">The Verge - 科技趋势</a>
+                <a href="https://www.wired.com" target="_blank">WIRED - 科技创新</a>
+            </div>
+        </div>
+        <div class="category">
+            <h2 onclick="toggleLinks('techArticles')">技术文章与博客</h2>
+            <div class="links" id="techArticles">
+                <a href="https://www.hackernoon.com" target="_blank">Hacker Noon - 技术文章</a>
+                <a href="https://www.medium.com" target="_blank">Medium - 博客平台</a>
+                <a href="https://dev.to" target="_blank">DEV Community - 开发者社区</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2024 阿坑科技. All rights reserved.</p>
+    </footer>
+    <script>
+        function toggleLinks(categoryId) {
+            var links = document.getElementById(categoryId);
+            if (links.style.display === "none" || links.style.display === "") {
+                links.style.display = "block";
+            } else {
+                links.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
