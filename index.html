@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -9,45 +9,53 @@
     .accordion-content {
       display: none;
     }
+    #navigation {
+      text-align: center;
+      background-color: #e94560; /* 导航条背景色 */
+      padding: 10px 0;
+      margin-bottom: 20px; /* 增加底部间距 */
+    }
+    #navigation a {
+      color: #ffffff; /* 链接颜色 */
+      text-decoration: none; /* 去掉下划线 */
+      margin: 0 15px; /* 链接之间的间距 */
+      font-size: 1.2em; /* 字体大小 */
+    }
+    #navigation a:hover {
+      text-decoration: underline; /* 悬停时下划线 */
+    }
+    #container {
+      text-align: center; /* 容器内容居中 */
+    }
   </style>
   <script>
-document.addEventListener('DOMContentLoaded', function() {
-
-  // 获取折叠列表的所有标题元素
-  var accordionHeaders = document.querySelectorAll('.accordion-header');
-
-  // 遍历标题元素并添加点击事件处理函数
-  accordionHeaders.forEach(function(header) {
-    header.addEventListener('click', function() {
-      this.classList.toggle('active');
-      var content = this.nextElementSibling;
-      if (content.style.display === 'block') {
-        content.style.display = 'none';
-      } else {
-        content.style.display = 'block';
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      var accordionHeaders = document.querySelectorAll('.accordion-header');
+      accordionHeaders.forEach(function(header) {
+        header.addEventListener('click', function() {
+          this.classList.toggle('active');
+          var content = this.nextElementSibling;
+          if (content.style.display === 'block') {
+            content.style.display = 'none';
+          } else {
+            content.style.display = 'block';
+          }
+        });
+      });
     });
-  });
-});
-
   </script>
 </head>
-    <script src="script.js"></script>
 <body>
-
-      <div id="container">
-        <p id="time"></p>
-      </div>
-    
-    <div style="text-align: center;">
-        <p>各位朋友，你们好！</p>
-        <p>我是小天，欢迎来到这个导航网站。</p>
-        <p>更多精彩内容，请关注我的个人公众号：<strong>一小天地</strong>。</p>
-        <li> <a href="https://01xiaotian.github.io/example1.html" target="_blank" rel="noopener noreferrer">页面跳转1</a> </li>
-        <li> <a href="https://01xiaotian.github.io/articles.html" target="_blank" rel="noopener noreferrer">页面跳转2</a> </li>
-        <li> <a href="https://01xiaotian.github.io/example3.html" target="_blank" rel="noopener noreferrer">页面跳转3</a> </li>
-        <p>以下是一个折叠页面，点击可展开查看：</p>
-      </div>      
+  <div id="navigation">
+    <a href="previous_articles.html">往期文章</a>
+    <a href="resources.html">网盘资源</a>
+    <a href="updates.html">网站更新</a>
+  </div>
+  
+  <div id="container">
+    <p id="time"></p>
+    <p>以下是一个折叠页面，点击可展开查看：</p>
+  </div>     
 
       <div class="accordion">
 
