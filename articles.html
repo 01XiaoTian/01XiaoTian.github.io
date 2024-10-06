@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿坑科技 - 文章更新页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            background-color: #0f3460;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .article {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .article:hover {
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .article img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .article h2 {
+            font-size: 1.8em;
+            color: #0f3460;
+            margin: 10px 0;
+        }
+        .article p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #555;
+        }
+        .article .read-more {
+            margin-top: 10px;
+            display: inline-block;
+            color: #e94560;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .article .read-more:hover {
+            color: #c0392b;
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            background-color: #0f3460;
+            width: 100%;
+            text-align: center;
+            color: #808080;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>阿坑科技文章更新</h1>
+    </header>
+    <div class="container">
+        <!-- 第一篇文章 -->
+        <div class="article">
+            <img src="https://www.helloimg.com/i/2024/10/05/6700e14a36fad.png" alt="文章图片">
+            <h2>论文查重</h2>
+            <p>本文主要介绍了免费的查重网站，供大家使用，全部为网页形式，需要注册登录。</p>
+            <a href="articles/article1.html" class="read-more">阅读更多 &raquo;</a>
+        </div>
+        
+        <!-- 第二篇文章 -->
+        <div class="article">
+            <img src="https://www.helloimg.com/i/2024/10/05/6700f605202a4.png" alt="文章图片">
+            <h2>PDF在线处理</h2>
+            <p>这篇文章介绍了许多免费的在线PDF处理工具，各有优劣，各有特点。</p>
+            <a href="articles/article2.html" class="read-more">阅读更多 &raquo;</a>
+        </div>
+
+         <div class="article">
+            <img src="https://www.helloimg.com/i/2024/10/05/6700f8502b7a2.png" alt="文章图片">
+            <h2>PDF解密</h2>
+            <p>本文介绍了PDF解密相关的文章。</p>
+            <a href="articles/article3.html" class="read-more">阅读更多 &raquo;</a>
+        </div> 
+
+        <!-- 添加更多文章时复制并粘贴下面的代码块即可 -->
+        <!-- 
+        <div class="article">
+            <img src="https://www.helloimg.com/i/2024/10/05/6700f605202a4.png" alt="文章图片">
+            <h2>文章标题三</h2>
+            <p>这是第三篇文章的摘要。每篇文章的布局相同，便于统一管理和更新。</p>
+            <a href="articles/article3.html" class="read-more">阅读更多 &raquo;</a>
+        </div> 
+        -->
+    </div>
+    <footer>
+        <p>&copy; 2024 阿坑科技. All rights reserved.</p>
+    </footer>
+</body>
+</html>

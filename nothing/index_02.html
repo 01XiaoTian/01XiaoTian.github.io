@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公众号：一小天地 的网站</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    #navigation {
+      text-align: center;
+      background-color: #e94560; /* 导航条背景色 */
+      padding: 10px 0;
+      margin-bottom: 20px; /* 增加底部间距 */
+      width: 100%;
+    }
+    #navigation a {
+      color: #ffffff; /* 链接颜色 */
+      text-decoration: none; /* 去掉下划线 */
+      margin: 0 15px; /* 链接之间的间距 */
+      font-size: 1.2em; /* 字体大小 */
+    }
+    #navigation a:hover {
+      text-decoration: underline; /* 悬停时下划线 */
+    }
+    #content-wrapper {
+      display: flex;
+      width: 90%;
+      max-width: 1200px;
+      margin-bottom: 40px;
+    }
+    #accordion-container {
+      flex: 2;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-right: 20px;
+    }
+    #accordion-container .accordion-header {
+      cursor: pointer;
+      padding: 15px;
+      background-color: #e94560;
+      color: #ffffff;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    #accordion-container .accordion-content {
+      display: none;
+      padding: 10px 15px;
+      background-color: #f9f9f9;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    #accordion-container .accordion-content li {
+      list-style: none;
+      margin: 5px 0;
+    }
+    #accordion-container .accordion-content li a {
+      color: #e94560;
+      text-decoration: none;
+    }
+    #accordion-container .accordion-content li a:hover {
+      text-decoration: underline;
+    }
+    #sidebar {
+      flex: 1;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    #sidebar .section {
+      margin-bottom: 20px;
+    }
+    #sidebar .section h3 {
+      background-color: #e94560;
+      color: #ffffff;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 0 0 10px;
+    }
+    #sidebar .section p, #sidebar .section img {
+      margin: 0 0 10px;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var accordionHeaders = document.querySelectorAll('.accordion-header');
+      accordionHeaders.forEach(function(header) {
+        header.addEventListener('click', function() {
+          this.classList.toggle('active');
+          var content = this.nextElementSibling;
+          if (content.style.display === 'block') {
+            content.style.display = 'none';
+          } else {
+            content.style.display = 'block';
+          }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="navigation">
+    <a href="articles.html">往期文章</a>
+    <a href="resources.html">网盘资源</a>
+    <a href="updates.html">网站更新</a>
+    <a href="advertisements.html">流量卡业务</a>
+  </div>
+
+  <div id="content-wrapper">
+    <div id="accordion-container">
+      <div class="accordion">
+        <div class="accordion-header">在线工具/PDF处理</div>
+        <div class="accordion-content">
+          <div class="accordion-header">PDF在线处理</div>
+          <div class="accordion-content">
+            <li> <a href="https://mp.weixin.qq.com/s/QsyDnOqQRaw02U2ju6JQZQ" target="_blank" rel="noopener noreferrer">PDF解密</a> </li>
+            <li> <a href="https://tools.pdf24.org/" target="_blank" rel="noopener noreferrer">PDF24</a> </li>
+            <li> <a href="https://pdfcandy.com/" target="_blank" rel="noopener noreferrer">PDF Candy</a> </li>
+            <li> <a href="https://www.ilovepdf.com/" target="_blank" rel="noopener noreferrer">ILovePDF</a> </li>
+            <li> <a href="https://smallpdf.com/pdf-tools" target="_blank" rel="noopener noreferrer">Smallpdf</a> </li>
+          </div>
+
+          <div class="accordion-header">在线工具箱</div>
+          <div class="accordion-content">
+            <li> <a href="https://ol.woobx.cn/" target="_blank" rel="noopener noreferrer">一个木函</a> </li>
+            <li> <a href="https://www.dute.org/" target="_blank" rel="noopener noreferrer">独特工具箱</a> </li>
+            <li> <a href="http://www.atoolbox.net/" target="_blank" rel="noopener noreferrer">一个工具箱</a> </li>
+          </div>
+
+          <div class="accordion-header">生成短链接</div>
+          <div class="accordion-content">
+            <li> <a href="https://tool.chinaz.com/Tools/dwz.aspx" target="_blank" rel="noopener noreferrer">站长工具</a> </li>
+            <li> <a href="http://ipaiban.com/dwz#" target="_blank" rel="noopener noreferrer">i排版</a> </li>
+            <li> <a href="https://www.ft12.com/" target="_blank" rel="noopener noreferrer">ft12短网址</a> </li>
+          </div>
+
+          <div class="accordion-header">格式转换</div>
+          <div class="accordion-content">
+            <li> <a href="https://www.online-convert.com/" target="_blank" rel="noopener noreferrer">Online-Convert</a> </li>
+            <li> <a href="https://www.zamzar.com/" target="_blank" rel="noopener noreferrer">Zamzar</a> </li>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebar">
+      <div class="section">
+        <h3>公告栏</h3>
+        <p>欢迎来到公众号【一小天地】和【阿坑科技】的共创网站！这里将为您提供最新的工具、资源与资讯。</p>
+      </div>
+      <div class="section">
+        <h3>流量卡</h3>
+        <a href="https://axu.simhaoka.com/phone/index?id=1ADB5B9B1895B5C3D60FE0A4B2D486B6" target="_blank">
+         <img src="https://www.helloimg.com/i/2024/10/05/67010819a8d06.png" alt="流量卡广告" style="width: 100%; height: auto; border-radius: 5px;">
+        </a>
+         <p>流量卡产品，提供多种套餐，适合多种需求，点击图片即可跳转至店铺。</p>
+      </div>
+      <div class="section">
+        <h3>关于我</h3>
+        <img src="https://www.helloimg.com/i/2024/10/06/67026f7cba437.png" alt="流量卡广告" style="width: 100%; height: auto; border-radius: 5px;">
+        <p>公众号，阿坑科技，专注于工具资源分享。</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

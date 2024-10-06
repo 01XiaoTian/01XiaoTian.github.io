@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电子书资源 - 阿坑科技</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            background-color: #0f3460; /* 深蓝色 */
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        .container {
+            width: 95%;
+            max-width: 900px;
+            margin: 30px 0;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .accordion {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .accordion-header {
+            padding: 15px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            font-weight: bold;
+        }
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .resource-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .resource-list li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .resource-list a {
+            text-decoration: none;
+            color: #0f3460; /* 深蓝色 */
+        }
+        .resource-list a:hover {
+            text-decoration: underline; /* 悬停时下划线 */
+        }
+        .back-home {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background-color: #e94560; /* 红色背景 */
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.5);
+        }
+        .back-home:hover {
+            background-color: #c0392b; /* 悬停时更深的红色 */
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    var content = this.nextElementSibling;
+                    if (content.style.display === 'block') {
+                        content.style.display = 'none';
+                    } else {
+                        content.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>电子书资源</h1>
+    </header>
+    <div class="container">
+        <div class="accordion">
+            <div class="accordion-header">电子版教材</div>
+            <div class="accordion-content">
+                <ul class="resource-list">
+                    <li><a href="https://pan.quark.cn/s/9157de671944" target="_blank" rel="noopener noreferrer">📖各科全版本电子课本库大合集【115GB】</a> </li>
+                    <li><a href="https://pan.quark.cn/s/5272c431f4cc" target="_blank" rel="noopener noreferrer">新标日教材</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="accordion">
+            <div class="accordion-header">其他电子书</div>
+            <div class="accordion-content">
+                <ul class="resource-list">
+                    <li> <a href="https://pan.quark.cn/s/f7f93ceeba38" target="_blank" rel="noopener noreferrer">豆瓣年度读书榜单（2015年-2023年）</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/5015dc81a5d8" target="_blank" rel="noopener noreferrer">罗辑思维荐书集锦（套装共24册） - 尤瓦尔·赫拉利 等</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/fcbb8139c858" target="_blank" rel="noopener noreferrer">工具书合集pdf版（辞海+字典）</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/409040ccd236" target="_blank" rel="noopener noreferrer">诺贝尔文学奖历届(1901~2023)作品合集</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/4dbe630d9995" target="_blank" rel="noopener noreferrer">茅盾文学奖01-11届获奖作品</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/5015dc81a5d8" target="_blank" rel="noopener noreferrer">中华书局出版社精选500册</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/dc01d6d6b562" target="_blank" rel="noopener noreferrer">绝版古籍电子书合集（13大类）</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/5e1db7b5f1b7" target="_blank" rel="noopener noreferrer">中国古典文学名著100部珍藏版</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/ad724e005b39" target="_blank" rel="noopener noreferrer">📙经典人物传记书籍【1000本1.27GB】</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/3392e960cd7b" target="_blank" rel="noopener noreferrer">36本精选摄影电子+ 21本后期修图电子书内含素材</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="accordion">
+            <div class="accordion-header">英语学习电子书</div>
+            <div class="accordion-content">
+                <ul class="resource-list">
+                    <li> <a href="https://pan.quark.cn/s/611e50039ea9" target="_blank" rel="noopener noreferrer">海尼曼英语启蒙分级绘本（298本全）</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/6272b641a17c" target="_blank" rel="noopener noreferrer">《书虫 牛津英汉双语读物》全套</a> </li>
+                    <li> <a href="https://pan.quark.cn/s/d460a29377a4" target="_blank" rel="noopener noreferrer">牛津通识读本英文版</a> </li>
+                </ul>
+            </div>
+        </div>
+        <a href="/01XiaoTian.github.io-main--basic/resources.html" class="back-home">返回上一页</a>
+    </div>
+</body>
+</html>

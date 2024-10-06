@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影资源 - 阿坑科技</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            background-color: #0f3460; /* 深蓝色 */
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        .container {
+            width: 95%;
+            max-width: 900px;
+            margin: 30px 0;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .accordion {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .accordion-header {
+            padding: 15px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            font-weight: bold;
+        }
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .resource-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .resource-list li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .resource-list a {
+            text-decoration: none;
+            color: #0f3460; /* 深蓝色 */
+        }
+        .resource-list a:hover {
+            text-decoration: underline; /* 悬停时下划线 */
+        }
+        .back-home {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background-color: #e94560; /* 红色背景 */
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.5);
+        }
+        .back-home:hover {
+            background-color: #c0392b; /* 悬停时更深的红色 */
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    var content = this.nextElementSibling;
+                    if (content.style.display === 'block') {
+                        content.style.display = 'none';
+                    } else {
+                        content.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>影视资源</h1>
+    </header>
+    <div class="container">
+        <div class="accordion">
+            <div class="accordion-header">电视剧资源</div>
+            <div class="accordion-content">
+                <ul class="resource-list">
+                    <li><a href="/resources/film_resources.html" target="_blank">经典电影</a></li>
+                    <li><a href="/resources/tv_series.html" target="_blank">电视剧</a></li>
+                    <li><a href="/resources/anime.html" target="_blank">动漫</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="accordion">
+            <div class="accordion-header">电影资源</div>
+            <div class="accordion-content">
+                <ul class="resource-list">
+                    <li><a href="/resources/classic_music.html" target="_blank">经典音乐</a></li>
+                    <li><a href="/resources/rap_music.html" target="_blank">说唱音乐</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="accordion">
+            <div class="accordion-header">纪录片资源</div>
+            <div class="accordion-content">
+                <ul class="resource-list">
+                    <li><a href="/resources/utilities.html" target="_blank">实用工具</a></li>
+                    <li><a href="/resources/games.html" target="_blank">游戏软件</a></li>
+                </ul>
+            </div>
+        </div>
+        <a href="/01XiaoTian.github.io-main--basic/resources.html" class="back-home">返回上一页</a>
+    </div>
+</body>
+</html>
