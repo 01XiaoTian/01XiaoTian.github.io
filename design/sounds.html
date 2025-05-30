@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沉浸式音频可视化工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c1d 0%, #15152b 100%);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        /* 控制面板样式 */
+        .control-panel {
+            width: 380px;
+            background: rgba(20, 20, 40, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 108, 255, 0.2);
+            overflow-y: auto;
+        }
+        
+        .panel-section {
+            background: rgba(30, 30, 60, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(100, 108, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+        
+        /* 上传区域样式 */
+        .upload-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px dashed rgba(100, 108, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-container:hover {
+            background: rgba(100, 100, 255, 0.1);
+            border-color: #646cff;
+        }
+        
+        .upload-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: #646cff;
+        }
+        
+        .upload-text {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background: linear-gradient(90deg, #646cff, #a855f7);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(100, 108, 255, 0.3);
+        }
+        
+        .browse-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(100, 108, 255, 0.4);
+        }
+        
+        /* 可视化区域样式 */
+        .visualization-area {
+            flex: 1;
+            background: rgba(10, 10, 25, 0.7);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 108, 255, 0.1);
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .viz-title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* 控制按钮样式 */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: none;
+            height: 50px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .control-btn i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(100, 108, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .play-btn {
+            grid-column: span 3;
+            background: linear-gradient(90deg, #646cff, #a855f7);
+            height: 60px;
+            font-size: 1.1rem;
+        }
+        
+        /* 可视化选择样式 */
+        .visualization-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .viz-option {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .viz-option i {
+            font-size: 1.4rem;
+            color: #a855f7;
+        }
+        
+        .viz-option:hover {
+            background: rgba(100, 108, 255, 0.2);
+        }
+        
+        .viz-option.active {
+            background: linear-gradient(90deg, rgba(100, 108, 255, 0.5), rgba(168, 85, 247, 0.5));
+            box-shadow: 0 4px 15px rgba(100, 108, 255, 0.2);
+            border: 1px solid rgba(100, 108, 255, 0.3);
+        }
+        
+        /* 进度控制样式 */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #646cff, #a855f7);
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(100, 108, 255, 0.8);
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .volume-control i {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .volume-slider {
+            flex: 1;
+        }
+        
+        /* 文件信息样式 */
+        .file-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-label {
+            opacity: 0.7;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: #a855f7;
+        }
+        
+        /* 音频分析条 */
+        .audio-analysis {
+            display: flex;
+            gap: 5px;
+            height: 100px;
+            align-items: flex-end;
+        }
+        
+        .frequency-bar {
+            flex: 1;
+            background: linear-gradient(to top, #646cff, #a855f7);
+            border-radius: 3px 3px 0 0;
+            min-height: 1px;
+            transition: height 0.1s ease;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .control-panel {
+                width: 100%;
+                height: auto;
+            }
+            
+            .visualization-area {
+                height: 50vh;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧控制面板 -->
+        <div class="control-panel">
+            <div class="panel-section">
+                <h1>音频可视化工具</h1>
+                <p class="subtitle">上传音频文件，体验沉浸式可视化效果</p>
+                
+                <div class="upload-container" id="dropZone">
+                    <div class="upload-icon">
+                        <i class="fas fa-music pulse"></i>
+                    </div>
+                    <h2 class="upload-text">拖放音频文件到此处</h2>
+                    <p>或</p>
+                    <button class="browse-btn" id="browseBtn">
+                        <i class="fas fa-folder-open"></i> 浏览文件
+                    </button>
+                    <input type="file" id="fileInput" class="file-input" accept="audio/*">
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h2><i class="fas fa-sliders-h"></i> 播放控制</h2>
+                <div class="controls">
+                    <button class="control-btn" id="prevBtn">
+                        <i class="fas fa-step-backward"></i>
+                        <span>上一首</span>
+                    </button>
+                    <button class="control-btn" id="restartBtn">
+                        <i class="fas fa-redo"></i>
+                        <span>重播</span>
+                    </button>
+                    <button class="control-btn" id="nextBtn">
+                        <i class="fas fa-step-forward"></i>
+                        <span>下一首</span>
+                    </button>
+                    <button class="control-btn play-btn" id="playBtn">
+                        <i class="fas fa-play"></i>
+                        <span>播放/暂停</span>
+                    </button>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="currentTime">00:00</span>
+                    <span id="totalTime">00:00</span>
+                </div>
+                
+                <div class="volume-control">
+                    <i class="fas fa-volume-up"></i>
+                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h2><i class="fas fa-palette"></i> 可视化效果</h2>
+                <div class="visualization-selector">
+                    <div class="viz-option active" data-viz="wave">
+                        <i class="fas fa-wave-square"></i>
+                        <span>声波脉冲</span>
+                    </div>
+                    <div class="viz-option" data-viz="particles">
+                        <i class="fas fa-atom"></i>
+                        <span>粒子爆炸</span>
+                    </div>
+                    <div class="viz-option" data-viz="circle">
+                        <i class="fas fa-circle"></i>
+                        <span>频谱光环</span>
+                    </div>
+                    <div class="viz-option" data-viz="fire">
+                        <i class="fas fa-fire"></i>
+                        <span>音频火焰</span>
+                    </div>
+                    <div class="viz-option" data-viz="network">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>几何网络</span>
+                    </div>
+                    <div class="viz-option" data-viz="mountain">
+                        <i class="fas fa-mountain"></i>
+                        <span>音频山脉</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h2><i class="fas fa-info-circle"></i> 文件信息</h2>
+                <div class="file-info">
+                    <div class="info-item">
+                        <span class="info-label">文件名称:</span>
+                        <span class="info-value" id="fileName">未选择</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">文件大小:</span>
+                        <span class="info-value" id="fileSize">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">音频时长:</span>
+                        <span class="info-value" id="fileDuration">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">当前效果:</span>
+                        <span class="info-value" id="currentEffect">声波脉冲</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h2><i class="fas fa-chart-bar"></i> 频率分析</h2>
+                <div class="audio-analysis" id="audioAnalysis">
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                    <div class="frequency-bar"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧可视化区域 -->
+        <div class="visualization-area">
+            <div class="viz-title">
+                <i class="fas fa-wave-square"></i> 声波脉冲
+            </div>
+            <canvas id="visualizer"></canvas>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取DOM元素
+            const dropZone = document.getElementById('dropZone');
+            const browseBtn = document.getElementById('browseBtn');
+            const fileInput = document.getElementById('fileInput');
+            const canvas = document.getElementById('visualizer');
+            const ctx = canvas.getContext('2d');
+            const playBtn = document.getElementById('playBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressContainer = document.getElementById('progressContainer');
+            const currentTimeEl = document.getElementById('currentTime');
+            const totalTimeEl = document.getElementById('totalTime');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const fileDuration = document.getElementById('fileDuration');
+            const currentEffect = document.getElementById('currentEffect');
+            const vizOptions = document.querySelectorAll('.viz-option');
+            const vizTitle = document.querySelector('.viz-title');
+            const audioAnalysis = document.getElementById('audioAnalysis');
+            const frequencyBars = audioAnalysis.querySelectorAll('.frequency-bar');
+            
+            // 音频上下文和变量
+            let audioContext;
+            let audioElement;
+            let analyser;
+            let source;
+            let dataArray;
+            let animationId;
+            let currentViz = 'wave';
+            
+            // 设置Canvas大小
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            // 文件上传处理
+            browseBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // 拖放事件处理
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.background = 'rgba(100, 100, 255, 0.15)';
+                dropZone.style.borderColor = '#646cff';
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.background = 'rgba(255, 255, 255, 0.05)';
+                dropZone.style.borderColor = 'rgba(100, 108, 255, 0.3)';
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.background = 'rgba(255, 255, 255, 0.05)';
+                dropZone.style.borderColor = 'rgba(100, 108, 255, 0.3)';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+            
+            function handleFileSelect(e) {
+                if (e.target.files.length) {
+                    handleFile(e.target.files[0]);
+                }
+            }
+            
+            function handleFile(file) {
+                // 检查文件类型
+                if (!file.type.match('audio.*')) {
+                    alert('请选择音频文件！');
+                    return;
+                }
+                
+                // 显示文件信息
+                fileName.textContent = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                
+                // 创建音频元素
+                if (audioElement) {
+                    audioElement.pause();
+                    cancelAnimationFrame(animationId);
+                }
+                
+                audioElement = new Audio(URL.createObjectURL(file));
+                
+                // 设置音频事件
+                audioElement.addEventListener('loadedmetadata', () => {
+                    fileDuration.textContent = formatTime(audioElement.duration);
+                    totalTimeEl.textContent = formatTime(audioElement.duration);
+                });
+                
+                audioElement.addEventListener('timeupdate', updateProgress);
+                audioElement.addEventListener('ended', () => {
+                    playBtn.querySelector('i').className = 'fas fa-play';
+                    playBtn.querySelector('span').textContent = '播放';
+                });
+                
+                // 初始化Web Audio API
+                initAudioAnalyser();
+                
+                // 更新播放按钮状态
+                playBtn.querySelector('i').className = 'fas fa-play';
+                playBtn.querySelector('span').textContent = '播放';
+            }
+            
+            // 初始化音频分析器
+            function initAudioAnalyser() {
+                if (audioContext) {
+                    audioContext.close();
+                }
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                source = audioContext.createMediaElementSource(audioElement);
+                
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                analyser.fftSize = 2048;
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                // 开始可视化
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                visualize();
+                
+                // 开始频率分析
+                updateFrequencyBars();
+            }
+            
+            // 更新频率条
+            function updateFrequencyBars() {
+                if (!analyser || !dataArray) {
+                    requestAnimationFrame(updateFrequencyBars);
+                    return;
+                }
+                
+                analyser.getByteFrequencyData(dataArray);
+                
+                // 将频率数据分组
+                const groupSize = Math.floor(dataArray.length / frequencyBars.length);
+                for (let i = 0; i < frequencyBars.length; i++) {
+                    let sum = 0;
+                    for (let j = 0; j < groupSize; j++) {
+                        sum += dataArray[i * groupSize + j];
+                    }
+                    const avg = sum / groupSize;
+                    frequencyBars[i].style.height = `${avg * 0.5}px`;
+                }
+                
+                requestAnimationFrame(updateFrequencyBars);
+            }
+            
+            // 播放控制
+            playBtn.addEventListener('click', () => {
+                if (audioElement) {
+                    if (audioElement.paused) {
+                        audioElement.play();
+                        playBtn.querySelector('i').className = 'fas fa-pause';
+                        playBtn.querySelector('span').textContent = '暂停';
+                    } else {
+                        audioElement.pause();
+                        playBtn.querySelector('i').className = 'fas fa-play';
+                        playBtn.querySelector('span').textContent = '播放';
+                    }
+                }
+            });
+            
+            // 进度控制
+            progressContainer.addEventListener('click', (e) => {
+                if (!audioElement) return;
+                
+                const width = progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const duration = audioElement.duration;
+                
+                audioElement.currentTime = (clickX / width) * duration;
+            });
+            
+            // 音量控制
+            volumeSlider.addEventListener('input', () => {
+                if (audioElement) {
+                    audioElement.volume = volumeSlider.value;
+                }
+            });
+            
+            // 可视化效果选择
+            vizOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    vizOptions.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    currentViz = option.dataset.viz;
+                    
+                    // 更新标题
+                    const iconClass = option.querySelector('i').className;
+                    const title = option.querySelector('span').textContent;
+                    vizTitle.innerHTML = `<i class="${iconClass}"></i> ${title}`;
+                    currentEffect.textContent = title;
+                });
+            });
+            
+            // 更新进度条
+            function updateProgress() {
+                if (!audioElement) return;
+                
+                const progressPercent = (audioElement.currentTime / audioElement.duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                
+                currentTimeEl.textContent = formatTime(audioElement.currentTime);
+            }
+            
+            // 格式化时间
+            function formatTime(seconds) {
+                if (isNaN(seconds)) return '00:00';
+                
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            // 格式化文件大小
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                else return (bytes / 1048576).toFixed(1) + ' MB';
+            }
+            
+            // 可视化函数
+            function visualize() {
+                if (!analyser || !dataArray) {
+                    animationId = requestAnimationFrame(visualize);
+                    return;
+                }
+                
+                // 获取频率数据
+                analyser.getByteFrequencyData(dataArray);
+                
+                // 清除画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 应用当前可视化效果
+                switch(currentViz) {
+                    case 'wave':
+                        drawWaveform();
+                        break;
+                    case 'particles':
+                        drawParticleEffect();
+                        break;
+                    case 'circle':
+                        drawCircularSpectrum();
+                        break;
+                    case 'fire':
+                        drawAudioFire();
+                        break;
+                    case 'network':
+                        drawGeometricNetwork();
+                        break;
+                    case 'mountain':
+                        drawMountainSpectrum();
+                        break;
+                }
+                
+                animationId = requestAnimationFrame(visualize);
+            }
+            
+            // 绘制波形
+            function drawWaveform() {
+                ctx.beginPath();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#646cff';
+                
+                const sliceWidth = canvas.width / dataArray.length;
+                let x = 0;
+                
+                for (let i = 0; i < dataArray.length; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = v * canvas.height / 2;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    x += sliceWidth;
+                }
+                
+                ctx.lineTo(canvas.width, canvas.height / 2);
+                ctx.stroke();
+                
+                // 添加渐变填充
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.lineTo(0, canvas.height);
+                ctx.closePath();
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                gradient.addColorStop(0, 'rgba(100, 108, 255, 0.2)');
+                gradient.addColorStop(1, 'rgba(100, 108, 255, 0.05)');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            }
+            
+            // 绘制粒子效果
+            function drawParticleEffect() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                for (let i = 0; i < 200; i++) {
+                    const index = Math.floor(i * dataArray.length / 200);
+                    const amplitude = dataArray[index] / 255;
+                    
+                    const angle = (i / 50) * Math.PI * 2 + Date.now() / 1000;
+                    const distance = 100 + amplitude * 200;
+                    
+                    const x = centerX + Math.cos(angle) * distance;
+                    const y = centerY + Math.sin(angle) * distance;
+                    
+                    const size = 2 + amplitude * 8;
+                    const hue = (i * 2 + Date.now() / 50) % 360;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${hue}, 100%, 60%, ${0.5 + amplitude * 0.5})`;
+                    ctx.fill();
+                    
+                    // 绘制连接线
+                    if (i % 5 === 0) {
+                        ctx.beginPath();
+                        ctx.moveTo(centerX, centerY);
+                        ctx.lineTo(x, y);
+                        ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${0.2 + amplitude * 0.3})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            // 绘制圆形频谱
+            function drawCircularSpectrum() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = Math.min(centerX, centerY) * 0.6;
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                const bars = 200;
+                const step = Math.PI * 2 / bars;
+                
+                for (let i = 0; i < bars; i++) {
+                    const amplitude = dataArray[i % dataArray.length];
+                    
+                    const innerRadius = radius - 20;
+                    const outerRadius = innerRadius + amplitude * 0.5;
+                    
+                    const angle = i * step + Date.now() / 2000;
+                    
+                    const x1 = centerX + Math.cos(angle) * innerRadius;
+                    const y1 = centerY + Math.sin(angle) * innerRadius;
+                    
+                    const x2 = centerX + Math.cos(angle) * outerRadius;
+                    const y2 = centerY + Math.sin(angle) * outerRadius;
+                    
+                    // 创建渐变
+                    const hue = (i * 3 + Date.now() / 50) % 360;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = `hsla(${hue}, 100%, 60%, 0.8)`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // 绘制端点
+                    ctx.beginPath();
+                    ctx.arc(x2, y2, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${hue}, 100%, 70%, 1)`;
+                    ctx.fill();
+                }
+            }
+            
+            // 绘制音频火焰
+            function drawAudioFire() {
+                const centerX = canvas.width / 2;
+                const bottomY = canvas.height - 50;
+                
+                // 绘制火焰基础
+                ctx.beginPath();
+                ctx.moveTo(centerX - 150, bottomY);
+                ctx.lineTo(centerX + 150, bottomY);
+                ctx.lineTo(centerX, bottomY - 300);
+                ctx.closePath();
+                
+                const gradient = ctx.createLinearGradient(centerX, bottomY - 300, centerX, bottomY);
+                gradient.addColorStop(0, 'rgba(255, 100, 0, 0.1)');
+                gradient.addColorStop(1, 'rgba(255, 50, 0, 0.5)');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // 绘制火焰粒子
+                for (let i = 0; i < 100; i++) {
+                    const index = Math.floor(i * dataArray.length / 100);
+                    const amplitude = dataArray[index] / 255;
+                    
+                    const x = centerX + (Math.random() - 0.5) * 300;
+                    const y = bottomY - Math.random() * 300 * amplitude;
+                    
+                    const size = 2 + Math.random() * 8 * amplitude;
+                    const hue = 20 + Math.random() * 20;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${hue}, 100%, 60%, ${0.3 + amplitude * 0.7})`;
+                    ctx.fill();
+                }
+            }
+            
+            // 绘制几何网络
+            function drawGeometricNetwork() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                // 绘制背景网格
+                ctx.strokeStyle = 'rgba(100, 108, 255, 0.05)';
+                ctx.lineWidth = 1;
+                
+                for (let x = 0; x < canvas.width; x += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                
+                for (let y = 0; y < canvas.height; y += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+                
+                // 绘制音频点
+                const points = [];
+                const pointCount = 50;
+                
+                for (let i = 0; i < pointCount; i++) {
+                    const index = Math.floor(i * dataArray.length / pointCount);
+                    const amplitude = dataArray[index] / 255;
+                    
+                    const angle = (i / pointCount) * Math.PI * 2 + Date.now() / 3000;
+                    const distance = 50 + amplitude * 200;
+                    
+                    const x = centerX + Math.cos(angle) * distance;
+                    const y = centerY + Math.sin(angle) * distance;
+                    
+                    points.push({x, y, size: 3 + amplitude * 10});
+                    
+                    // 绘制点
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3 + amplitude * 10, 0, Math.PI * 2);
+                    const hue = (i * 10 + Date.now() / 20) % 360;
+                    ctx.fillStyle = `hsla(${hue}, 100%, 60%, 0.8)`;
+                    ctx.fill();
+                }
+                
+                // 绘制连接线
+                ctx.lineWidth = 1;
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const dx = points[i].x - points[j].x;
+                        const dy = points[i].y - points[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 200) {
+                            const alpha = 1 - distance / 200;
+                            const hue = ((i + j) * 5 + Date.now() / 50) % 360;
+                            ctx.beginPath();
+                            ctx.moveTo(points[i].x, points[i].y);
+                            ctx.lineTo(points[j].x, points[j].y);
+                            ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${alpha * 0.6})`;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            // 绘制山脉频谱
+            function drawMountainSpectrum() {
+                const centerY = canvas.height * 0.7;
+                const step = canvas.width / dataArray.length;
+                
+                // 创建渐变背景
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                gradient.addColorStop(0, '#0c0c1d');
+                gradient.addColorStop(1, '#15152b');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制主山脉
+                ctx.beginPath();
+                ctx.moveTo(0, centerY);
+                
+                for (let i = 0; i < dataArray.length; i++) {
+                    const amplitude = dataArray[i];
+                    const x = i * step;
+                    const y = centerY - amplitude * 1.2;
+                    
+                    ctx.lineTo(x, y);
+                }
+                
+                ctx.lineTo(canvas.width, centerY);
+                ctx.closePath();
+                
+                const mountainGradient = ctx.createLinearGradient(0, centerY - 200, 0, centerY);
+                mountainGradient.addColorStop(0, 'rgba(168, 85, 247, 0.8)');
+                mountainGradient.addColorStop(1, 'rgba(100, 108, 255, 0.3)');
+                
+                ctx.fillStyle = mountainGradient;
+                ctx.fill();
+                
+                // 添加随机星星
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * centerY * 0.6;
+                    const size = Math.random() * 2;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.5 + Math.random() * 0.5) + ')';
+                    ctx.fill();
+                }
+            }
+            
+            // 示例音频文件（如果用户没有上传）
+            const sampleAudio = new Audio();
+            sampleAudio.src = "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3";
+            sampleAudio.crossOrigin = "anonymous";
+            fileName.textContent = "示例音乐: Tech House Vibes";
+            fileSize.textContent = "2.1 MB";
+            fileDuration.textContent = "00:15";
+            audioElement = sampleAudio;
+            initAudioAnalyser();
+        });
+    </script>
+</body>
+</html>
