@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>真实世界物理模拟系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 200, 255, 0.7);
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .simulation-area {
+            flex: 1;
+            min-width: 300px;
+            max-width: 700px;
+            background: rgba(0, 10, 30, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            position: relative;
+        }
+        
+        #physicsCanvas {
+            background: rgba(5, 15, 40, 0.9);
+            display: block;
+            width: 100%;
+            height: 500px;
+        }
+        
+        .controls {
+            flex: 0 0 300px;
+            background: rgba(0, 10, 30, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+            border-bottom: 2px solid rgba(79, 195, 247, 0.3);
+            padding-bottom: 5px;
+        }
+        
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: rgba(100, 150, 255, 0.2);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4fc3f7;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+        }
+        
+        .value-display {
+            text-align: right;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            background: linear-gradient(to right, #2193b0, #6dd5ed);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #1e88e5, #64b5f6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 20, 40, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .physics-info {
+            background: rgba(0, 20, 40, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .physics-info h3 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+        
+        .physics-info ul {
+            padding-left: 20px;
+        }
+        
+        .physics-info li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .simulation-area, .controls {
+                max-width: 100%;
+            }
+        }
+        
+        .trail {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>真实世界物理模拟系统</h1>
+        <p class="subtitle">基于HTML5 Canvas和JavaScript物理引擎，模拟小球在重力、摩擦力、碰撞等物理作用下的行为。调整参数观察物理定律如何影响运动。</p>
+    </header>
+    
+    <div class="container">
+        <div class="simulation-area">
+            <canvas id="physicsCanvas"></canvas>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h2>物理参数控制</h2>
+                
+                <div class="slider-container">
+                    <label for="gravity">重力强度: <span id="gravity-value">0.5</span> g</label>
+                    <input type="range" id="gravity" min="0" max="1" step="0.01" value="0.5">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="friction">摩擦力: <span id="friction-value">0.01</span></label>
+                    <input type="range" id="friction" min="0" max="0.1" step="0.001" value="0.01">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="elasticity">弹性系数: <span id="elasticity-value">0.8</span></label>
+                    <input type="range" id="elasticity" min="0.1" max="1" step="0.01" value="0.8">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="ball-size">小球大小: <span id="ball-size-value">30</span>px</label>
+                    <input type="range" id="ball-size" min="10" max="60" step="1" value="30">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="ball-count">小球数量: <span id="ball-count-value">10</span></label>
+                    <input type="range" id="ball-count" min="1" max="30" step="1" value="10">
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="add-ball">添加小球</button>
+                <button id="reset">重置模拟</button>
+                <button id="toggle-trails">轨迹开关</button>
+            </div>
+            
+            <div class="stats">
+                <div>小球数量: <span id="ball-count-display">10</span></div>
+                <div>帧率: <span id="fps">60</span> FPS</div>
+            </div>
+            
+            <div class="physics-info">
+                <h3>模拟的物理原理</h3>
+                <ul>
+                    <li><strong>牛顿运动定律</strong>：物体运动遵循F=ma</li>
+                    <li><strong>重力</strong>：垂直向下的恒定加速度</li>
+                    <li><strong>碰撞</strong>：动量守恒和能量损失</li>
+                    <li><strong>摩擦力</strong>：与速度方向相反的阻力</li>
+                    <li><strong>弹性碰撞</strong>：通过恢复系数模拟能量损失</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取Canvas和上下文
+        const canvas = document.getElementById('physicsCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置Canvas尺寸
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 物理参数
+        let gravity = 0.5;
+        let friction = 0.01;
+        let elasticity = 0.8;
+        let ballSize = 30;
+        let ballCount = 10;
+        let showTrails = true;
+        
+        // 小球数组
+        let balls = [];
+        
+        // 帧率计算
+        let lastTime = 0;
+        let fps = 60;
+        
+        // 小球类
+        class Ball {
+            constructor(x, y, radius) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.color = this.getRandomColor();
+                this.trail = [];
+                this.maxTrailLength = 20;
+            }
+            
+            getRandomColor() {
+                const colors = [
+                    '#FF5252', '#FF4081', '#E040FB', '#7C4DFF',
+                    '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
+                    '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            update() {
+                // 应用重力
+                this.vy += gravity;
+                
+                // 应用摩擦力
+                this.vx *= (1 - friction);
+                this.vy *= (1 - friction);
+                
+                // 更新位置
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // 边界碰撞检测
+                if (this.x - this.radius < 0) {
+                    this.x = this.radius;
+                    this.vx = -this.vx * elasticity;
+                } else if (this.x + this.radius > canvas.width) {
+                    this.x = canvas.width - this.radius;
+                    this.vx = -this.vx * elasticity;
+                }
+                
+                if (this.y - this.radius < 0) {
+                    this.y = this.radius;
+                    this.vy = -this.vy * elasticity;
+                } else if (this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    this.vy = -this.vy * elasticity;
+                }
+                
+                // 添加轨迹点
+                if (showTrails) {
+                    this.trail.push({x: this.x, y: this.y});
+                    if (this.trail.length > this.maxTrailLength) {
+                        this.trail.shift();
+                    }
+                }
+            }
+            
+            draw() {
+                // 绘制轨迹
+                if (showTrails && this.trail.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                    
+                    for (let i = 1; i < this.trail.length; i++) {
+                        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                    }
+                    
+                    ctx.strokeStyle = `${this.color}80`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+                
+                // 绘制小球
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                // 创建径向渐变
+                const gradient = ctx.createRadialGradient(
+                    this.x - this.radius/3, this.y - this.radius/3, 1,
+                    this.x, this.y, this.radius
+                );
+                gradient.addColorStop(0, '#FFFFFF');
+                gradient.addColorStop(0.3, this.color);
+                gradient.addColorStop(1, `${this.color}80`);
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // 添加高光
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius/3, this.y - this.radius/3, this.radius/4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fill();
+                
+                // 添加阴影
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y + this.radius/2, this.radius*0.8, this.radius/4, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fill();
+            }
+        }
+        
+        // 创建初始小球
+        function createBalls(count) {
+            balls = [];
+            for (let i = 0; i < count; i++) {
+                createBall();
+            }
+        }
+        
+        function createBall() {
+            const radius = ballSize * (0.7 + Math.random() * 0.6);
+            const x = radius + Math.random() * (canvas.width - radius * 2);
+            const y = radius + Math.random() * (canvas.height - radius * 2);
+            
+            balls.push(new Ball(x, y, radius));
+            updateBallCount();
+        }
+        
+        // 碰撞检测
+        function checkCollisions() {
+            for (let i = 0; i < balls.length; i++) {
+                for (let j = i + 1; j < balls.length; j++) {
+                    const ball1 = balls[i];
+                    const ball2 = balls[j];
+                    
+                    const dx = ball2.x - ball1.x;
+                    const dy = ball2.y - ball1.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // 碰撞检测
+                    if (distance < ball1.radius + ball2.radius) {
+                        // 碰撞角度
+                        const angle = Math.atan2(dy, dx);
+                        
+                        // 速度分量
+                        const vx1 = ball1.vx * Math.cos(angle) + ball1.vy * Math.sin(angle);
+                        const vy1 = ball1.vy * Math.cos(angle) - ball1.vx * Math.sin(angle);
+                        const vx2 = ball2.vx * Math.cos(angle) + ball2.vy * Math.sin(angle);
+                        const vy2 = ball2.vy * Math.cos(angle) - ball2.vx * Math.sin(angle);
+                        
+                        // 一维碰撞后的速度
+                        const finalVx1 = ((ball1.radius * ball1.radius - ball2.radius * ball2.radius) * vx1 + 
+                                         (2 * ball2.radius * ball2.radius) * vx2) / 
+                                        (ball1.radius * ball1.radius + ball2.radius * ball2.radius);
+                        const finalVx2 = ((2 * ball1.radius * ball1.radius) * vx1 + 
+                                         (ball2.radius * ball2.radius - ball1.radius * ball1.radius) * vx2) / 
+                                        (ball1.radius * ball1.radius + ball2.radius * ball2.radius);
+                        
+                        // 应用弹性系数
+                        const eVx1 = finalVx1 * elasticity;
+                        const eVx2 = finalVx2 * elasticity;
+                        
+                        // 更新速度
+                        ball1.vx = eVx1 * Math.cos(angle) - vy1 * Math.sin(angle);
+                        ball1.vy = vy1 * Math.cos(angle) + eVx1 * Math.sin(angle);
+                        ball2.vx = eVx2 * Math.cos(angle) - vy2 * Math.sin(angle);
+                        ball2.vy = vy2 * Math.cos(angle) + eVx2 * Math.sin(angle);
+                        
+                        // 防止小球重叠
+                        const overlap = (ball1.radius + ball2.radius - distance) / 2;
+                        ball1.x -= overlap * Math.cos(angle);
+                        ball1.y -= overlap * Math.sin(angle);
+                        ball2.x += overlap * Math.cos(angle);
+                        ball2.y += overlap * Math.sin(angle);
+                    }
+                }
+            }
+        }
+        
+        // 更新小球数量显示
+        function updateBallCount() {
+            document.getElementById('ball-count-display').textContent = balls.length;
+        }
+        
+        // 动画循环
+        function animate(timestamp) {
+            // 计算帧率
+            if (lastTime) {
+                const deltaTime = timestamp - lastTime;
+                fps = Math.round(1000 / deltaTime);
+            }
+            lastTime = timestamp;
+            document.getElementById('fps').textContent = fps;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景网格
+            drawGrid();
+            
+            // 更新和绘制所有小球
+            for (const ball of balls) {
+                ball.update();
+                ball.draw();
+            }
+            
+            // 检查碰撞
+            checkCollisions();
+            
+            // 下一帧
+            requestAnimationFrame(animate);
+        }
+        
+        // 绘制背景网格
+        function drawGrid() {
+            const gridSize = 40;
+            ctx.strokeStyle = 'rgba(100, 150, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            // 垂直线
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // 水平线
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        // 初始化事件监听器
+        function initEventListeners() {
+            // 重力控制
+            document.getElementById('gravity').addEventListener('input', function() {
+                gravity = parseFloat(this.value);
+                document.getElementById('gravity-value').textContent = gravity.toFixed(2);
+            });
+            
+            // 摩擦力控制
+            document.getElementById('friction').addEventListener('input', function() {
+                friction = parseFloat(this.value);
+                document.getElementById('friction-value').textContent = friction.toFixed(3);
+            });
+            
+            // 弹性控制
+            document.getElementById('elasticity').addEventListener('input', function() {
+                elasticity = parseFloat(this.value);
+                document.getElementById('elasticity-value').textContent = elasticity.toFixed(2);
+            });
+            
+            // 小球大小控制
+            document.getElementById('ball-size').addEventListener('input', function() {
+                ballSize = parseInt(this.value);
+                document.getElementById('ball-size-value').textContent = ballSize;
+            });
+            
+            // 小球数量控制
+            document.getElementById('ball-count').addEventListener('input', function() {
+                ballCount = parseInt(this.value);
+                document.getElementById('ball-count-value').textContent = ballCount;
+                createBalls(ballCount);
+            });
+            
+            // 添加小球按钮
+            document.getElementById('add-ball').addEventListener('click', function() {
+                createBall();
+            });
+            
+            // 重置按钮
+            document.getElementById('reset').addEventListener('click', function() {
+                createBalls(ballCount);
+            });
+            
+            // 轨迹开关
+            document.getElementById('toggle-trails').addEventListener('click', function() {
+                showTrails = !showTrails;
+                this.textContent = showTrails ? '关闭轨迹' : '开启轨迹';
+            });
+            
+            // 点击添加小球
+            canvas.addEventListener('click', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const radius = ballSize * (0.7 + Math.random() * 0.6);
+                balls.push(new Ball(x, y, radius));
+                updateBallCount();
+            });
+        }
+        
+        // 初始化
+        function init() {
+            createBalls(ballCount);
+            initEventListeners();
+            requestAnimationFrame(animate);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
