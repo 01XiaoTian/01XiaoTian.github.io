@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>粒子绘画实验室 | 创意色彩舞蹈</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.05) 1px, transparent 20px),
+                radial-gradient(white, rgba(255,255,255,.03) 1px, transparent 15px);
+            background-size: 350px 350px, 200px 200px;
+            background-position: 0 0, 30px 30px;
+            animation: moveStars 100s linear infinite;
+        }
+
+        @keyframes moveStars {
+            to { background-position: 500px 500px, 230px 230px; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff8e8f, #e53b85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 0 30px rgba(229, 59, 133, 0.5);
+            color: white;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            to { transform: scale(1.05); box-shadow: 0 0 40px rgba(229, 59, 133, 0.7); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ff8e8f, #e53b85, #4e9de6, #4ce0d2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(78, 157, 230, 0.3);
+            letter-spacing: 1.5px;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            color: #c1dcf7;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .canvas-container {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(20, 25, 50, 0.7);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 180, 255, 0.1);
+            position: relative;
+        }
+
+        canvas {
+            background: rgba(0, 10, 20, 0.5);
+            border-radius: 10px;
+            display: block;
+            width: 100%;
+            height: 420px;
+            cursor: crosshair;
+            box-shadow: inset 0 0 20px rgba(0, 100, 255, 0.2);
+        }
+
+        .controls-panel {
+            width: 100%;
+            min-width: 250px;
+            flex: 0 0 300px;
+            background: rgba(20, 25, 50, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 180, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4ce0d2;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(76, 224, 210, 0.3);
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #c1dcf7;
+        }
+
+        .slider-container {
+            position: relative;
+            height: 30px;
+            margin: 5px 0 15px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(100, 150, 255, 0.2);
+            outline: none;
+            appearance: none;
+            border-radius: 10px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ce0d2;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(76, 224, 210, 0.6);
+        }
+
+        .slider-value {
+            position: absolute;
+            top: -25px;
+            right: 0;
+            background: #4ce0d2;
+            color: #0f1a30;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(76, 224, 210, 0.6);
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #4e9de6, #4ce0d2);
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(78, 157, 230, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 157, 230, 0.5);
+        }
+
+        button.secondary {
+            background: linear-gradient(45deg, #e53b85, #ff8e8f);
+            box-shadow: 0 5px 15px rgba(229, 59, 133, 0.3);
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 8px 20px rgba(229, 59, 133, 0.5);
+        }
+
+        .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset {
+            padding: 8px 15px;
+            background: rgba(200, 200, 255, 0.1);
+            border: 1px solid rgba(100, 180, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset:hover, .preset.active {
+            background: #4ce0d2;
+            color: #0f1a30;
+            box-shadow: 0 0 15px rgba(76, 224, 210, 0.5);
+        }
+
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        .color-option.active::after {
+            content: "\2713";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            font-size: 1.1rem;
+            color: #8ca9ff;
+            letter-spacing: 0.5px;
+            margin-top: 30px;
+        }
+
+        .instructions {
+            background: rgba(50, 80, 150, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 25px;
+            font-size: 0.95rem;
+            color: #a3d0ff;
+            border-left: 3px solid #4ce0d2;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .controls-panel, .canvas-container {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-palette"></i>
+            </div>
+            <h1>粒子绘画实验室</h1>
+            <p class="subtitle">释放你的创造力！在虚拟画布上拖动鼠标，创造出流光溢彩的粒子动态艺术。</p>
+        </header>
+
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="particleCanvas" width="800" height="420"></canvas>
+            </div>
+            
+            <div class="controls-panel">
+                <h2 class="section-title">粒子控制器</h2>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>粒子大小：</span>
+                        <span class="slider-value" id="size-value">5</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="20" value="5" class="slider" id="size-slider">
+                    </div>
+                    
+                    <div class="control-label">
+                        <span>生成密度：</span>
+                        <span class="slider-value" id="density-value">5</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="20" value="5" class="slider" id="density-slider">
+                    </div>
+                    
+                    <div class="control-label">
+                        <span>移动速度：</span>
+                        <span class="slider-value" id="speed-value">5</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="10" value="5" class="slider" id="speed-slider">
+                    </div>
+                    
+                    <div class="control-label">
+                        <span>生命周期：</span>
+                        <span class="slider-value" id="life-value">50</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="10" max="200" value="50" class="slider" id="life-slider">
+                    </div>
+                </div>
+                
+                <h2 class="section-title">颜色模式</h2>
+                <div class="color-options">
+                    <div class="color-option active" style="background: linear-gradient(45deg, #ff8e8f, #ffc0c1);" title="粉红暖调" data-mode="pink"></div>
+                    <div class="color-option" style="background: linear-gradient(45deg, #4e9de6, #4ce0d2);" title="冷色调" data-mode="blue"></div>
+                    <div class="color-option" style="background: linear-gradient(45deg, #c56cf0, #ffb8b8);" title="紫色幻想" data-mode="purple"></div>
+                    <div class="color-option" style="background: linear-gradient(45deg, #ffef78, #ffb380);" title="金色阳光" data-mode="gold"></div>
+                    <div class="color-option" style="background: linear-gradient(45deg, #0dc281, #6bdea7);" title="翠绿自然" data-mode="green"></div>
+                    <div class="color-option" style="background: linear-gradient(45deg, #ff5edf, #04c8de);" title="霓虹炫彩" data-mode="rainbow"></div>
+                </div>
+                
+                <div class="presets">
+                    <div class="preset active" data-preset="normal">标准粒子</div>
+                    <div class="preset" data-preset="fire">火焰效果</div>
+                    <div class="preset" data-preset="water">水流效果</div>
+                    <div class="preset" data-preset="snow">雪花效果</div>
+                    <div class="preset" data-preset="magic">魔法火花</div>
+                </div>
+                
+                <div class="buttons-grid">
+                    <button id="clear-btn">
+                        <i class="fas fa-trash-alt"></i>清除画布
+                    </button>
+                    <button id="toggle-btn" class="secondary">
+                        <i class="fas fa-play"></i>暂停/继续
+                    </button>
+                    <button id="save-btn">
+                        <i class="fas fa-download"></i>保存作品
+                    </button>
+                    <button id="share-btn" class="secondary">
+                        <i class="fas fa-share-alt"></i>分享创作
+                    </button>
+                </div>
+                
+                <div class="instructions">
+                    <p><i class="fas fa-lightbulb"></i> 提示：按住鼠标左键并在画布上拖动以创建粒子！使用不同的参数组合可以创造出独特的效果。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>粒子绘画实验室 | 探索交互式艺术的无限可能</p>
+            <p>用代码创作的艺术 © 2023 | 使用HTML5 Canvas技术</p>
+        </div>
+    </div>
+
+    <script>
+        // 粒子系统变量
+        let particles = [];
+        let particleSize = 5;
+        let density = 5;
+        let speed = 5;
+        let lifetime = 50;
+        let isPlaying = true;
+        let colorMode = 'pink';
+        
+        // 初始化Canvas
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 调整Canvas大小以适应容器
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth - 40; // 减去padding
+            canvas.height = canvas.width * 0.525; // 保持宽高比例
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 获取DOM元素
+        const sizeSlider = document.getElementById('size-slider');
+        const densitySlider = document.getElementById('density-slider');
+        const speedSlider = document.getElementById('speed-slider');
+        const lifeSlider = document.getElementById('life-slider');
+        const sizeValue = document.getElementById('size-value');
+        const densityValue = document.getElementById('density-value');
+        const speedValue = document.getElementById('speed-value');
+        const lifeValue = document.getElementById('life-value');
+        const clearBtn = document.getElementById('clear-btn');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const colorOptions = document.querySelectorAll('.color-option');
+        const presets = document.querySelectorAll('.preset');
+        
+        // 设置事件监听器
+        sizeSlider.addEventListener('input', function() {
+            particleSize = this.value;
+            sizeValue.textContent = particleSize;
+        });
+        
+        densitySlider.addEventListener('input', function() {
+            density = this.value;
+            densityValue.textContent = density;
+        });
+        
+        speedSlider.addEventListener('input', function() {
+            speed = this.value / 2;
+            speedValue.textContent = speed * 2;
+        });
+        
+        lifeSlider.addEventListener('input', function() {
+            lifetime = parseInt(this.value);
+            lifeValue.textContent = lifetime;
+        });
+        
+        clearBtn.addEventListener('click', function() {
+            particles = [];
+        });
+        
+        toggleBtn.addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            this.querySelector('i').className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+        });
+        
+        saveBtn.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = '粒子艺术作品.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+        
+        shareBtn.addEventListener('click', function() {
+            alert('您的作品已复制为图像链接!\n\n使用: “右键点击画布 -> 复制图像/另存为图像”');
+        });
+        
+        // 颜色模式切换
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                colorMode = this.getAttribute('data-mode');
+                // 应用预设对应的效果
+                const preset = document.querySelector('.preset.active').getAttribute('data-preset');
+                applyPreset(preset, false);
+            });
+        });
+        
+        // 预设效果切换
+        presets.forEach(preset => {
+            preset.addEventListener('click', function() {
+                presets.forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                const presetName = this.getAttribute('data-preset');
+                applyPreset(presetName);
+            });
+        });
+        
+        // 应用预设参数
+        function applyPreset(preset, changeColor = true) {
+            switch(preset) {
+                case 'normal':
+                    setSliders(5, 5, 5, 50);
+                    if(changeColor) colorMode = 'pink';
+                    break;
+                case 'fire':
+                    setSliders(3, 8, 7, 40);
+                    if(changeColor) colorMode = 'rainbow';
+                    break;
+                case 'water':
+                    setSliders(7, 3, 3, 100);
+                    if(changeColor) colorMode = 'blue';
+                    break;
+                case 'snow':
+                    setSliders(8, 2, 2, 150);
+                    if(changeColor) colorMode = 'gold';
+                    break;
+                case 'magic':
+                    setSliders(2, 7, 8, 30);
+                    if(changeColor) colorMode = 'purple';
+                    break;
+            }
+            
+            updateActiveColor();
+        }
+        
+        // 设置所有滑动条的值
+        function setSliders(size, densityVal, speedVal, life) {
+            sizeSlider.value = particleSize = size;
+            sizeValue.textContent = size;
+            
+            densitySlider.value = density = densityVal;
+            densityValue.textContent = densityVal;
+            
+            speedSlider.value = speedVal;
+            speedValue.textContent = speedVal;
+            speed = speedVal / 2;
+            
+            lifeSlider.value = lifetime = life;
+            lifeValue.textContent = life;
+        }
+        
+        // 更新选中的颜色
+        function updateActiveColor() {
+            colorOptions.forEach(opt => {
+                opt.classList.remove('active');
+                if(opt.getAttribute('data-mode') === colorMode) {
+                    opt.classList.add('active');
+                }
+            });
+        }
+        
+        // 获取粒子颜色
+        function getParticleColor() {
+            switch(colorMode) {
+                case 'blue':
+                    return `hsla(${200 + Math.random() * 60}, 80%, 65%, ${Math.random() * 0.5 + 0.5})`;
+                case 'purple':
+                    return `hsla(${270 + Math.random() * 50}, 80%, 70%, ${Math.random() * 0.6 + 0.4})`;
+                case 'gold':
+                    return `hsla(${40 + Math.random() * 30}, 90%, 65%, ${Math.random() * 0.8 + 0.2})`;
+                case 'green':
+                    return `hsla(${120 + Math.random() * 40}, 80%, 50%, ${Math.random() * 0.7 + 0.3})`;
+                case 'rainbow':
+                    return `hsla(${Math.random() * 360}, 90%, 60%, ${Math.random() * 0.8 + 0.2})`;
+                default: // pink
+                    return `hsla(${330 + Math.random() * 20}, 90%, 70%, ${Math.random() * 0.7 + 0.3})`;
+            }
+        }
+        
+        // 画布鼠标事件
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // 触摸事件支持
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            startDrawing(e.touches[0]);
+        });
+        
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            draw(e.touches[0]);
+        });
+        
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        let isDrawing = false;
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+        
+        function draw(e) {
+            if (!isDrawing || !isPlaying) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // 创建新粒子
+            for (let i = 0; i < density; i++) {
+                createParticle(mouseX, mouseY);
+            }
+        }
+        
+        function createParticle(x, y) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = Math.random() * particleSize * 2;
+            
+            particles.push({
+                x: x + Math.cos(angle) * dist,
+                y: y + Math.sin(angle) * dist,
+                size: Math.random() * particleSize + 1,
+                speedX: (Math.random() - 0.5) * speed * 2,
+                speedY: (Math.random() - 0.5) * speed * 2,
+                color: getParticleColor(),
+                lifetime: Math.random() * lifetime * 0.6 + lifetime * 0.4,
+                originalLife: lifetime,
+                gravity: Math.random() * 0.05 + 0.02 // 随机重力
+            });
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        // 粒子动画
+        function animate() {
+            if (isPlaying) {
+                // 清除画布，使用半透明填充实现拖尾效果
+                ctx.fillStyle = 'rgba(10, 10, 35, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 更新和绘制粒子
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    
+                    // 物理效果 (重力)
+                    p.speedY += p.gravity;
+                    
+                    // 更新位置
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    
+                    // 减少生命周期
+                    p.lifetime--;
+                    
+                    // 边界碰撞
+                    if (p.x < 0 || p.x > canvas.width) p.speedX *= -0.8;
+                    if (p.y < 0) {
+                        p.speedY *= -0.8;
+                        p.y = 0;
+                    } else if (p.y > canvas.height) {
+                        p.speedY *= -0.6;
+                        p.y = canvas.height;
+                    }
+                    
+                    // 绘制粒子
+                    const progress = 1 - (p.lifetime / p.originalLife);
+                    const size = p.size * (0.5 + 0.5 * progress);
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    
+                    // 移除生命结束的粒子
+                    if (p.lifetime <= 0) {
+                        particles.splice(i, 1);
+                        i--;
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 启动动画
+        animate();
+    </script>
+</body>
+</html>
