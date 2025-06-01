@@ -3,9 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>批量网址打开工具</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- SEO优化 -->
+    <title>批量网址打开工具 - 高效处理多个链接的在线工具</title>
+    <meta name="description" content="免费在线批量网址打开工具，支持一键打开多个网址，提高工作效率。支持新标签页和新窗口打开模式，自动识别无效链接。">
+    <meta name="keywords" content="批量打开网址,网址批量处理,多链接打开工具,在线工具,网址管理,效率工具">
+    <meta name="author" content="01xiaotian">
+    
+    <!-- 规范URL -->
+    <link rel="canonical" href="https://01xiaotian.github.io/tools/batch-websites.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://01xiaotian.github.io/tools/batch-websites.html">
+    <meta property="og:title" content="批量网址打开工具 - 高效处理多个链接的在线工具">
+    <meta property="og:description" content="免费在线批量网址打开工具，支持一键打开多个网址，提高工作效率。">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=Batch+URL+Opener">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://01xiaotian.github.io/tools/batch-websites.html">
+    <meta property="twitter:title" content="批量网址打开工具 - 高效处理多个链接的在线工具">
+    <meta property="twitter:description" content="免费在线批量网址打开工具，支持一键打开多个网址，提高工作效率。">
+    <meta property="twitter:image" content="https://via.placeholder.com/1200x630.png?text=Batch+URL+Opener">
+    
+    <!-- 结构化数据 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "批量网址打开工具",
+      "description": "免费在线工具，用于批量打开多个网址链接",
+      "applicationCategory": "Utility",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "01xiaotian"
+      },
+      "url": "https://01xiaotian.github.io/tools/batch-websites.html"
+    }
+    </script>
+    
+    <!-- 站点图标 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔗</text></svg>">
+    
     <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6e9de4;
+            --success-color: #4CAF50;
+            --error-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --text-color: #333;
+            --text-light: #777;
+            --border-color: #e0e0e0;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,20 +73,22 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            color: var(--text-color);
+            line-height: 1.6;
         }
         
         .container {
             width: 100%;
-            max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.95);
+            max-width: 900px;
+            background-color: #fff;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--card-shadow);
             overflow: hidden;
             padding: 30px;
         }
@@ -35,60 +96,77 @@
         header {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
         }
         
         h1 {
-            color: #2c3e50;
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #6a11cb, #2575fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            color: var(--primary-color);
         }
         
         .subtitle {
-            color: #7f8c8d;
+            color: var(--text-light);
             font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         .input-area {
             margin-bottom: 25px;
+            position: relative;
         }
         
         textarea {
             width: 100%;
             min-height: 200px;
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             font-size: 1rem;
             resize: vertical;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: #fff;
+            color: var(--text-color);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
         }
         
         textarea:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(110, 157, 228, 0.1);
         }
         
         .hint {
-            margin-top: 8px;
+            margin-top: 10px;
             font-size: 0.9rem;
-            color: #7f8c8d;
+            color: var(--text-light);
         }
         
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             margin-bottom: 25px;
         }
         
         .mode-selector {
             flex: 1;
             min-width: 250px;
-            background: #f8f9fa;
+            background: var(--light-bg);
             border-radius: 10px;
             padding: 20px;
         }
@@ -96,7 +174,7 @@
         .mode-title {
             font-weight: 600;
             margin-bottom: 15px;
-            color: #2c3e50;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -117,18 +195,19 @@
         input[type="radio"] {
             width: 18px;
             height: 18px;
-            accent-color: #3498db;
+            accent-color: var(--primary-color);
         }
         
         .buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
+            width: 100%;
         }
         
         button {
             flex: 1;
-            min-width: 120px;
+            min-width: 140px;
             padding: 14px 20px;
             border: none;
             border-radius: 8px;
@@ -140,42 +219,39 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
+            color: white;
         }
         
         #processBtn {
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: white;
+            background: var(--primary-color);
         }
         
         #processBtn:hover {
-            background: linear-gradient(135deg, #009b88, #7db82d);
+            background: #3a5a8a;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         #openBtn {
-            background: linear-gradient(135deg, #3498db, #1a5276);
-            color: white;
+            background: var(--success-color);
         }
         
         #openBtn:hover {
-            background: linear-gradient(135deg, #2980b9, #154360);
+            background: #3d8b40;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         #clearBtn {
-            background: #f1f2f6;
-            color: #2c3e50;
+            background: #7f8c8d;
+            color: white;
         }
         
         #clearBtn:hover {
-            background: #dfe4ea;
+            background: #6c7a7d;
             transform: translateY(-2px);
         }
         
         .results {
-            background: #f8f9fa;
+            background: var(--light-bg);
             border-radius: 10px;
             padding: 20px;
             margin-top: 20px;
@@ -190,10 +266,19 @@
         
         .results-title {
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .counter {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
         
         .url-list {
@@ -207,16 +292,21 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 15px;
-            background: white;
+            background: #fff;
             border-radius: 8px;
             margin-bottom: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s;
+        }
+        
+        .url-item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
         }
         
         .url-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             overflow: hidden;
         }
         
@@ -224,64 +314,128 @@
             width: 20px;
             height: 20px;
             flex-shrink: 0;
+            border-radius: 3px;
         }
         
         .url-text {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #2c3e50;
+            color: var(--text-color);
         }
         
         .url-status {
             display: flex;
             gap: 10px;
+            margin-left: 10px;
         }
         
         .valid {
-            color: #27ae60;
+            color: var(--success-color);
+            font-weight: 500;
         }
         
         .invalid {
-            color: #e74c3c;
-        }
-        
-        .counter {
-            background: #3498db;
-            color: white;
-            border-radius: 20px;
-            padding: 2px 10px;
-            font-size: 0.9rem;
+            color: var(--error-color);
+            font-weight: 500;
         }
         
         .error {
-            color: #e74c3c;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(231, 76, 60, 0.1);
+            color: var(--error-color);
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(231, 76, 60, 0.08);
             border-radius: 8px;
             display: none;
+            font-weight: 500;
         }
         
         .success {
-            color: #27ae60;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(76, 175, 80, 0.08);
             border-radius: 8px;
             display: none;
+            font-weight: 500;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .feature-icon {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .feature-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .seo-content {
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--light-bg);
+            border-radius: 10px;
+        }
+        
+        .seo-title {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .seo-text {
+            color: var(--text-color);
+            line-height: 1.8;
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+        
+        .seo-text strong {
+            color: var(--primary-color);
         }
         
         .footer {
             text-align: center;
             margin-top: 30px;
-            color: #7f8c8d;
+            color: var(--text-light);
             font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
         }
         
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .container {
-                padding: 20px;
+                padding: 25px 20px;
             }
             
             h1 {
@@ -299,14 +453,19 @@
             button {
                 width: 100%;
             }
+            
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-link"></i> 批量网址打开工具</h1>
-            <p class="subtitle">粘贴多个网址，一键批量打开 - 提高您的工作效率</p>
+            <h1><i class="fas fa-external-link-alt"></i> 批量网址打开工具</h1>
+            <p class="subtitle">高效、免费的在线工具，用于批量打开多个网址链接。支持一键打开多个网址，提高您的工作效率！</p>
         </header>
         
         <div class="input-area">
@@ -315,7 +474,7 @@
 https://www.google.com
 https://www.github.com
 https://www.openai.com"></textarea>
-            <p class="hint">提示：每行输入一个网址，支持http://、https://开头的网址</p>
+            <p class="hint">提示：每行输入一个网址，支持http://或https://开头的网址</p>
         </div>
         
         <div class="controls">
@@ -362,7 +521,7 @@ https://www.openai.com"></textarea>
                     <i class="fas fa-list"></i> 解析结果
                 </div>
                 <div class="counter">
-                    已识别: <span id="validCount">0</span> | 无效: <span id="invalidCount">0</span>
+                    有效: <span id="validCount">0</span> | 无效: <span id="invalidCount">0</span>
                 </div>
             </div>
             <div class="url-list" id="urlList">
@@ -370,8 +529,58 @@ https://www.openai.com"></textarea>
             </div>
         </div>
         
+        <div class="feature-list">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="feature-title">高效便捷</h3>
+                <p class="feature-desc">一键打开多个网址，节省大量时间，提高工作效率</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">安全可靠</h3>
+                <p class="feature-desc">完全在浏览器中运行，不会上传或保存您的任何数据</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">响应式设计</h3>
+                <p class="feature-desc">在手机、平板和电脑上均可完美使用</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3 class="feature-title">智能识别</h3>
+                <p class="feature-desc">自动识别无效链接，避免无效操作</p>
+            </div>
+        </div>
+        
+        <div class="seo-content">
+            <h2 class="seo-title">批量网址打开工具 - 提升您的上网效率</h2>
+            <p class="seo-text">
+                <strong>批量网址打开工具</strong>是一款免费的在线工具，旨在帮助用户高效地处理多个网址链接。无论您是需要同时打开多个网站进行市场调研、数据分析，还是需要批量访问社交媒体页面，这个工具都能为您节省大量时间。
+            </p>
+            <p class="seo-text">
+                使用我们的工具，您只需将多个网址（每行一个）粘贴到输入框中，点击"解析网址"按钮，系统将自动识别所有有效链接。随后，您可以选择在新标签页或新窗口中打开所有有效链接。工具会智能过滤掉无效的网址，确保您只打开有效的网页。
+            </p>
+            <p class="seo-text">
+                <strong>主要功能包括：</strong>批量打开多个网址、支持新标签页/新窗口模式、自动识别无效链接、完全在浏览器中运行（无需上传数据）、响应式设计（适配各种设备）、直观的用户界面。
+            </p>
+            <p class="seo-text">
+                相比于手动逐个打开网址，使用批量网址打开工具可以将操作时间缩短90%以上。无论是数字营销人员、内容创作者、研究人员还是普通用户，都能从这个工具中受益。立即尝试，体验高效的上网方式！
+            </p>
+        </div>
+        
         <div class="footer">
-            <p>© 2023 批量网址打开工具 | 本工具完全在浏览器中运行，不会保存您的任何数据</p>
+            <p>© 2023 批量网址打开工具 | 本工具完全在浏览器中运行，不会保存或上传您的任何数据 | 在GitHub Pages上托管</p>
         </div>
     </div>
     
@@ -397,7 +606,10 @@ https://www.openai.com"></textarea>
                 "https://www.github.com",
                 "https://www.openai.com",
                 "https://www.wikipedia.org",
-                "https://www.example.com/invalid-url-test"
+                "https://www.example.com/invalid-url-test",
+                "https://www.microsoft.com",
+                "https://www.apple.com",
+                "https://www.amazon.com"
             ];
             
             urlInput.value = sampleUrls.join('\n');
@@ -467,7 +679,7 @@ https://www.openai.com"></textarea>
                     } catch (e) {
                         invalid++;
                         urlInfo.innerHTML = `
-                            <i class="fas fa-unlink favicon" style="color: #e74c3c;"></i>
+                            <i class="fas fa-unlink favicon" style="color: ${getComputedStyle(document.documentElement).getPropertyValue('--error-color')}"></i>
                             <div class="url-text">${url}</div>
                         `;
                         urlItem.appendChild(urlInfo);
@@ -540,6 +752,9 @@ https://www.openai.com"></textarea>
                 errorText.textContent = message;
                 errorMessage.style.display = 'block';
                 successMessage.style.display = 'none';
+                
+                // 滚动到错误信息位置
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             
             // 显示成功信息
@@ -556,7 +771,9 @@ https://www.openai.com"></textarea>
             }
             
             // 初始解析示例数据
-            processBtn.click();
+            setTimeout(() => {
+                processBtn.click();
+            }, 500);
         });
     </script>
 </body>
