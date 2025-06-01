@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量网址打开工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .input-area {
+            margin-bottom: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .hint {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .mode-selector {
+            flex: 1;
+            min-width: 250px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .mode-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mode-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3498db;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #processBtn {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        #processBtn:hover {
+            background: linear-gradient(135deg, #009b88, #7db82d);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #openBtn {
+            background: linear-gradient(135deg, #3498db, #1a5276);
+            color: white;
+        }
+        
+        #openBtn:hover {
+            background: linear-gradient(135deg, #2980b9, #154360);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #clearBtn {
+            background: #f1f2f6;
+            color: #2c3e50;
+        }
+        
+        #clearBtn:hover {
+            background: #dfe4ea;
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .results-title {
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .url-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .url-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .url-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .favicon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .url-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #2c3e50;
+        }
+        
+        .url-status {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .valid {
+            color: #27ae60;
+        }
+        
+        .invalid {
+            color: #e74c3c;
+        }
+        
+        .counter {
+            background: #3498db;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.9rem;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .success {
+            color: #27ae60;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(39, 174, 96, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-link"></i> 批量网址打开工具</h1>
+            <p class="subtitle">粘贴多个网址，一键批量打开 - 提高您的工作效率</p>
+        </header>
+        
+        <div class="input-area">
+            <textarea id="urlInput" placeholder="请输入网址列表（每行一个网址）：
+例如：
+https://www.google.com
+https://www.github.com
+https://www.openai.com"></textarea>
+            <p class="hint">提示：每行输入一个网址，支持http://、https://开头的网址</p>
+        </div>
+        
+        <div class="controls">
+            <div class="mode-selector">
+                <div class="mode-title">
+                    <i class="fas fa-window-restore"></i> 打开方式选择
+                </div>
+                <div class="mode-options">
+                    <div class="option">
+                        <input type="radio" id="tabMode" name="openMode" value="tab" checked>
+                        <label for="tabMode">在新标签页中打开（推荐）</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="windowMode" name="openMode" value="window">
+                        <label for="windowMode">在新窗口中打开</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="processBtn">
+                    <i class="fas fa-cogs"></i> 解析网址
+                </button>
+                <button id="openBtn">
+                    <i class="fas fa-external-link-alt"></i> 打开网址
+                </button>
+                <button id="clearBtn">
+                    <i class="fas fa-trash-alt"></i> 清空内容
+                </button>
+            </div>
+        </div>
+        
+        <div class="error" id="errorMessage">
+            <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+        </div>
+        
+        <div class="success" id="successMessage">
+            <i class="fas fa-check-circle"></i> <span id="successText"></span>
+        </div>
+        
+        <div class="results">
+            <div class="results-header">
+                <div class="results-title">
+                    <i class="fas fa-list"></i> 解析结果
+                </div>
+                <div class="counter">
+                    已识别: <span id="validCount">0</span> | 无效: <span id="invalidCount">0</span>
+                </div>
+            </div>
+            <div class="url-list" id="urlList">
+                <!-- 网址列表将在这里动态生成 -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 批量网址打开工具 | 本工具完全在浏览器中运行，不会保存您的任何数据</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlInput = document.getElementById('urlInput');
+            const urlList = document.getElementById('urlList');
+            const processBtn = document.getElementById('processBtn');
+            const openBtn = document.getElementById('openBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const errorText = document.getElementById('errorText');
+            const successText = document.getElementById('successText');
+            const validCount = document.getElementById('validCount');
+            const invalidCount = document.getElementById('invalidCount');
+            
+            let urls = [];
+            
+            // 示例数据
+            const sampleUrls = [
+                "https://www.google.com",
+                "https://www.github.com",
+                "https://www.openai.com",
+                "https://www.wikipedia.org",
+                "https://www.example.com/invalid-url-test"
+            ];
+            
+            urlInput.value = sampleUrls.join('\n');
+            
+            // 解析网址
+            processBtn.addEventListener('click', function() {
+                const inputText = urlInput.value.trim();
+                if (!inputText) {
+                    showError('请输入网址列表');
+                    return;
+                }
+                
+                // 按行分割输入
+                const inputUrls = inputText.split('\n');
+                urls = [];
+                
+                // 清空列表
+                urlList.innerHTML = '';
+                let valid = 0;
+                let invalid = 0;
+                
+                // 处理每个网址
+                inputUrls.forEach((url, index) => {
+                    url = url.trim();
+                    if (!url) return;
+                    
+                    const urlItem = document.createElement('div');
+                    urlItem.className = 'url-item';
+                    
+                    const urlInfo = document.createElement('div');
+                    urlInfo.className = 'url-info';
+                    
+                    // 尝试获取favicon
+                    const favicon = document.createElement('img');
+                    favicon.className = 'favicon';
+                    favicon.alt = 'favicon';
+                    
+                    // 验证URL
+                    let isValid = false;
+                    try {
+                        // 尝试创建URL对象
+                        const parsedUrl = new URL(url);
+                        isValid = true;
+                        valid++;
+                        
+                        // 尝试获取favicon
+                        const domain = parsedUrl.hostname;
+                        favicon.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+                        
+                        urlInfo.innerHTML = `
+                            <img class="favicon" src="${favicon.src}" alt="favicon">
+                            <div class="url-text">${url}</div>
+                        `;
+                        
+                        urlItem.appendChild(urlInfo);
+                        
+                        const urlStatus = document.createElement('div');
+                        urlStatus.className = 'url-status';
+                        urlStatus.innerHTML = `<span class="valid">有效</span>`;
+                        urlItem.appendChild(urlStatus);
+                        
+                        // 保存有效的URL对象
+                        urls.push({
+                            url: url,
+                            valid: true
+                        });
+                    } catch (e) {
+                        invalid++;
+                        urlInfo.innerHTML = `
+                            <i class="fas fa-unlink favicon" style="color: #e74c3c;"></i>
+                            <div class="url-text">${url}</div>
+                        `;
+                        urlItem.appendChild(urlInfo);
+                        
+                        const urlStatus = document.createElement('div');
+                        urlStatus.className = 'url-status';
+                        urlStatus.innerHTML = `<span class="invalid">无效</span>`;
+                        urlItem.appendChild(urlStatus);
+                        
+                        urls.push({
+                            url: url,
+                            valid: false
+                        });
+                    }
+                    
+                    urlList.appendChild(urlItem);
+                });
+                
+                validCount.textContent = valid;
+                invalidCount.textContent = invalid;
+                
+                if (valid > 0) {
+                    showSuccess(`成功解析了 ${valid} 个有效网址`);
+                } else {
+                    showError('没有找到有效的网址，请检查输入格式');
+                }
+            });
+            
+            // 打开网址
+            openBtn.addEventListener('click', function() {
+                if (urls.length === 0) {
+                    showError('请先解析网址');
+                    return;
+                }
+                
+                const validUrls = urls.filter(item => item.valid);
+                if (validUrls.length === 0) {
+                    showError('没有有效的网址可以打开');
+                    return;
+                }
+                
+                const openMode = document.querySelector('input[name="openMode"]:checked').value;
+                
+                // 打开所有有效网址
+                validUrls.forEach(item => {
+                    if (openMode === 'tab') {
+                        // 在新标签页中打开
+                        window.open(item.url, '_blank');
+                    } else {
+                        // 在新窗口中打开
+                        window.open(item.url, '_blank', 'width=1024,height=768');
+                    }
+                });
+                
+                showSuccess(`成功打开了 ${validUrls.length} 个网址`);
+            });
+            
+            // 清空内容
+            clearBtn.addEventListener('click', function() {
+                urlInput.value = '';
+                urlList.innerHTML = '';
+                urls = [];
+                validCount.textContent = '0';
+                invalidCount.textContent = '0';
+                hideMessages();
+            });
+            
+            // 显示错误信息
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            }
+            
+            // 显示成功信息
+            function showSuccess(message) {
+                successText.textContent = message;
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+            }
+            
+            // 隐藏所有消息
+            function hideMessages() {
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+            }
+            
+            // 初始解析示例数据
+            processBtn.click();
+        });
+    </script>
+</body>
+</html>
