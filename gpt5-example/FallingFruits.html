@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Falling Fruits</title>
+  <style>
+    :root{
+      --bg1:#2b2ef0; --bg2:#07d1ff; --bg3:#7bffb0; --panel:#ffffff; --text:#0f1230; --muted:#556;
+      --accent:#ff7ad9; --accent2:#ffe066; --danger:#ff5c5c; --ok:#2bd67b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; display:grid; place-items:center; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 20% -10%, #4f66ff 0%, #3ad5ff 40%, #7bffb0 70%, #e8fff5 100%);
+      background-attachment: fixed;
+    }
+    .wrap{ width:min(96vw, 980px); }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background:rgba(255,255,255,.85); backdrop-filter: blur(6px);
+      border:1px solid rgba(0,0,0,.08); border-radius:16px; padding:10px 14px; margin:10px auto 12px;
+      box-shadow:0 14px 40px rgba(0,0,0,.15);
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.3px}
+    .logo{width:28px;height:28px;border-radius:8px;background:conic-gradient(from 120deg, #ffb3ff, #ffec8a, #97ffcf, #9acbff, #ffb3ff); box-shadow:0 0 18px rgba(255,255,255,.6) inset}
+    .stat{display:flex; align-items:center; gap:8px; background:white; border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:8px 10px; font-weight:700}
+    .pill{border-radius:999px; background:#00000010; padding:2px 8px; font-size:.8rem; font-weight:700}
+
+    .board{ position:relative; background:linear-gradient(180deg, #e7f6ff, #eafff2); border:1px solid rgba(0,0,0,.08);
+      border-radius:16px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,.25);
+    }
+    canvas{ display:block; width:100%; height:auto; background:linear-gradient(180deg, #c3f1ff 0%, #d0ffe5 60%, #eafff2 100%); }
+
+    .overlay { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
+    .panel { pointer-events:auto; background:rgba(255,255,255,.92); border:1px solid rgba(0,0,0,.08); border-radius:16px; padding:18px 18px 16px; text-align:center; box-shadow:0 18px 50px rgba(0,0,0,.25); }
+    .panel h2 { margin:6px 0 8px; font-size:1.2rem; }
+    .panel p { margin:0 0 10px; color:#334; }
+
+    button{ all:unset; cursor:pointer; background:linear-gradient(180deg, #ff8cc6, #ff62ae); color:white; font-weight:800; letter-spacing:.2px;
+      padding:10px 14px; border-radius:12px; border:1px solid rgba(0,0,0,.12); box-shadow:0 8px 22px rgba(255,98,174,.35);
+      transition: transform .06s ease, filter .15s ease;
+    }
+    button:hover{ filter:brightness(1.05) }
+    button:active{ transform: translateY(1px) scale(0.99) }
+
+    .hearts{ display:flex; gap:6px; font-size:1.2rem; }
+    .heart{ filter: drop-shadow(0 2px 0 rgba(0,0,0,.2)); }
+    .dead{ opacity:.25; }
+
+    .help{ font-size:.9rem; color:#334; }
+    .kbd{ display:inline-grid; place-items:center; width:26px; height:26px; border-radius:6px; border:1px solid rgba(0,0,0,.12); background:white; margin:0 2px; font-weight:800 }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar" aria-label="HUD">
+      <div class="brand"><div class="logo"></div> Falling Fruits</div>
+      <div class="stat" aria-live="polite">Score <span id="score" class="pill">0</span></div>
+      <div class="stat hearts" title="Misses left">
+        <span id="h1" class="heart">❤️</span>
+        <span id="h2" class="heart">❤️</span>
+        <span id="h3" class="heart">❤️</span>
+      </div>
+      <div class="stat">Best <span id="best" class="pill">0</span></div>
+    </div>
+
+    <div id="board" class="board">
+      <canvas id="game" width="720" height="960" aria-label="Falling Fruits game area"></canvas>
+
+      <div id="overlay" class="overlay">
+        <div class="panel">
+          <h2 id="ovTitle">Catch the Fruits!</h2>
+          <p id="ovText">Move the basket with <span class="kbd">←</span><span class="kbd">→</span> or the mouse. Miss 3 and it's game over.</p>
+          <button id="playBtn">Play</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="help">Tip: Kids mode ready — fruits are big and colorful. You can also drag or move the mouse to steer the basket.</p>
+  </div>
+
+  <script>
+    // ========= Config =========
+    const CFG = {
+      aspect: 3/4,             // canvas aspect ratio (width/height)
+      baseSpawnMs: 1100,       // initial spawn interval
+      minSpawnMs: 420,         // minimum spawn interval as difficulty increases
+      gravity: 1100,           // px/s^2 baseline; scaled with canvas height
+      fruitBaseSize: 0.085,    // relative to canvas width (kids friendly)
+      basketW: 0.22,           // relative to width
+      basketH: 0.05,           // relative to height
+      basketSpeed: 900,        // px/s via keyboard
+      maxMisses: 3,
+    };
+
+    // ========= DOM =========
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const board = document.getElementById('board');
+    const overlay = document.getElementById('overlay');
+    const playBtn = document.getElementById('playBtn');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const hearts = [document.getElementById('h1'), document.getElementById('h2'), document.getElementById('h3')];
+
+    // ========= Helpers =========
+    function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+    function rand(a,b){ return a + Math.random()*(b-a); }
+
+    // Device pixel ratio crispness
+    function fitCanvas(){
+      const maxW = Math.min(board.clientWidth, 980);
+      const maxH = Math.min(window.innerHeight * 0.8, 1100);
+      let w = Math.min(maxW, maxH * CFG.aspect);
+      let h = Math.floor(w / CFG.aspect);
+      // keep reasonably large for kids
+      if (h < 520){ h = 520; w = Math.floor(h * CFG.aspect); }
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0); // draw in CSS pixel units
+    }
+
+    // ========= Game State =========
+    let fruits = [];
+    let basket = { x: 0, y: 0, w: 0, h: 0, vx: 0, targetX: null };
+    let lastTime = 0, acc = 0;   // for spawning
+    let running = false, gameOver = false;
+    let score = 0, misses = 0, best = parseInt(localStorage.getItem('ff_best')||'0');
+    bestEl.textContent = best;
+
+    const FRUITS = [ '🍎','🍌','🍓','🍊','🍉','🍐','🍇','🍒' ];
+
+    function resetHearts(){ hearts.forEach(h=>h.classList.remove('dead')); }
+    function updateHearts(){ hearts.forEach((h,i)=> h.classList.toggle('dead', i < misses)); }
+
+    function reset(){
+      score = 0; scoreEl.textContent = score;
+      misses = 0; resetHearts(); updateHearts();
+      fruits = [];
+      // sizes based on canvas
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+      basket.w = cw * CFG.basketW;
+      basket.h = ch * CFG.basketH;
+      basket.x = (cw - basket.w)/2; basket.y = ch - basket.h - 8;
+      basket.vx = 0; basket.targetX = null;
+      acc = 0; lastTime = performance.now();
+    }
+
+    function start(){ reset(); running = true; gameOver = false; overlay.style.display='none'; requestAnimationFrame(loop); }
+    function end(){ running = false; gameOver = true; overlay.style.display='grid';
+      document.getElementById('ovTitle').textContent = 'Game Over!';
+      document.getElementById('ovText').innerHTML = `You scored <b>${score}</b>. Missed ${misses}.`;
+      if (score > best){ best = score; localStorage.setItem('ff_best', String(best)); bestEl.textContent = best; }
+    }
+
+    // ========= Fruit mechanics =========
+    function spawnFruit(){
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+      const size = clamp(cw * CFG.fruitBaseSize * rand(0.9,1.2), 42, 96); // big & kid-friendly
+      const x = rand(10, cw - 10 - size);
+      const y = -size - rand(10, 80);
+      const g = CFG.gravity * (ch/800); // scale gravity to canvas height
+      const vx = rand(-40, 40);
+      fruits.push({ x, y, vy: rand(120, 200), vx, size, emoji: FRUITS[Math.floor(Math.random()*FRUITS.length)], g });
+    }
+
+    function spawnInterval(){
+      // Faster spawns as score rises
+      const t = Math.max(CFG.minSpawnMs, CFG.baseSpawnMs - score*15);
+      return t;
+    }
+
+    // ========= Input =========
+    window.addEventListener('keydown', (e)=>{
+      if (!running) return;
+      const k = e.key.toLowerCase();
+      if (['arrowleft','arrowright'].includes(k)) e.preventDefault();
+      if (k==='arrowleft') basket.vx = -CFG.basketSpeed;
+      if (k==='arrowright') basket.vx =  CFG.basketSpeed;
+    });
+    window.addEventListener('keyup', (e)=>{
+      const k = e.key.toLowerCase();
+      if (k==='arrowleft' || k==='arrowright') basket.vx = 0;
+    });
+
+    // Mouse / touch steering
+    function pointToCanvasX(clientX){
+      const rect = canvas.getBoundingClientRect();
+      return clamp(clientX - rect.left, 0, rect.width);
+    }
+    board.addEventListener('mousemove', (e)=>{ if(!running) return; basket.targetX = pointToCanvasX(e.clientX); });
+    board.addEventListener('mouseleave', ()=>{ basket.targetX=null; });
+    board.addEventListener('touchmove', (e)=>{ if(!running) return; basket.targetX = pointToCanvasX(e.touches[0].clientX); e.preventDefault(); }, {passive:false});
+
+    // ========= Update & Draw =========
+    function loop(ts){
+      if (!running) return;
+      const dt = Math.min(0.032, (ts - lastTime)/1000); // clamp for stability
+      lastTime = ts;
+      acc += dt*1000;
+
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+
+      // Spawn
+      if (acc >= spawnInterval()) { spawnFruit(); acc = 0; }
+
+      // Update fruits
+      for (let i=fruits.length-1; i>=0; i--){
+        const f = fruits[i];
+        f.vy += f.g * dt;
+        f.y += f.vy * dt;
+        f.x += f.vx * dt;
+        if (f.x < 0 || f.x+f.size > cw) f.vx *= -1; // bounce off side a bit
+        // Check miss
+        if (f.y > ch + 20){
+          fruits.splice(i,1);
+          misses++; updateHearts();
+          if (misses >= CFG.maxMisses) { end(); return; }
+        }
+      }
+
+      // Update basket (keyboard velocity + mouse/touch target)
+      if (basket.targetX !== null){
+        const center = basket.x + basket.w/2;
+        const dx = basket.targetX - center;
+        basket.x += dx * 0.2; // smooth follow
+      }
+      basket.x += basket.vx * dt;
+      basket.x = clamp(basket.x, 0, cw - basket.w);
+
+      // Catch detection (AABB)
+      for (let i=fruits.length-1; i>=0; i--){
+        const f = fruits[i];
+        const fx1=f.x, fx2=f.x+f.size, fy1=f.y, fy2=f.y+f.size;
+        const bx1=basket.x, bx2=basket.x+basket.w, by1=basket.y, by2=basket.y+basket.h;
+        if (fx2 > bx1 && fx1 < bx2 && fy2 > by1 && fy1 < by2){
+          fruits.splice(i,1);
+          score++; scoreEl.textContent = score;
+          popText(`+1`, f.x + f.size/2, by1 - 6);
+        }
+      }
+
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    // Floating score popups
+    const pops = [];
+    function popText(txt, x, y){ pops.push({txt, x, y, t:0}); }
+
+    // Draw everything
+    function draw(){
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+      ctx.clearRect(0,0,cw,ch);
+
+      // Background soft stripes
+      const grad = ctx.createLinearGradient(0,0,0,ch);
+      grad.addColorStop(0,'#c3f1ff'); grad.addColorStop(.6,'#d0ffe5'); grad.addColorStop(1,'#eafff2');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,cw,ch);
+
+      // Basket (rounded)
+      drawBasket();
+
+      // Fruits
+      for (const f of fruits){
+        ctx.font = `${Math.floor(f.size)}px system-ui, apple color emoji, segoe ui emoji`;
+        ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+        ctx.shadowColor = 'rgba(0,0,0,.15)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+        ctx.fillText(f.emoji, f.x, f.y);
+        ctx.shadowColor = 'transparent';
+      }
+
+      // Popups
+      for (let i=pops.length-1;i>=0;i--){
+        const p = pops[i]; p.t += 0.02; p.y -= 0.6; const a = Math.max(0, 1 - p.t);
+        ctx.globalAlpha = a; ctx.fillStyle = '#0f1230'; ctx.font = 'bold 20px system-ui'; ctx.textAlign='center';
+        ctx.fillText(p.txt, p.x, p.y); ctx.globalAlpha = 1; if (a<=0.02) pops.splice(i,1);
+      }
+
+      // Friendly ground shadow
+      ctx.fillStyle = 'rgba(0,0,0,.06)';
+      ctx.fillRect(0, canvas.clientHeight-8, cw, 8);
+    }
+
+    function drawBasket(){
+      const r = 12; const x=basket.x, y=basket.y, w=basket.w, h=basket.h;
+      // shell
+      ctx.beginPath();
+      ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+      ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+      ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+      ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+      const g = ctx.createLinearGradient(x,y,x,y+h);
+      g.addColorStop(0,'#ffcc6e'); g.addColorStop(1,'#ff9f4d');
+      ctx.fillStyle = g; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.stroke();
+      // stripes
+      ctx.strokeStyle = 'rgba(0,0,0,.08)';
+      for (let i=1;i<5;i++){ const yy = y + (i*h/5); ctx.beginPath(); ctx.moveTo(x+6,yy); ctx.lineTo(x+w-6,yy); ctx.stroke(); }
+    }
+
+    // ========= UI Events =========
+    playBtn.addEventListener('click', start);
+    window.addEventListener('resize', ()=>{ fitCanvas(); reset(); if(!gameOver && !running){ draw(); } });
+
+    // init
+    fitCanvas(); draw();
+  </script>
+</body>
+</html>
