@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 - 自媒体创作者</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>个人主页</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">首页</a></li>
+                <li><a href="#platforms" class="nav-link">自媒体平台</a></li>
+                <li><a href="#tools" class="nav-link">自制工具</a></li>
+                <li><a href="navigation.html" class="nav-link nav-special">网址导航</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主页内容 -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <!-- 个人信息卡片 -->
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="https://via.placeholder.com/120/4f46e5/ffffff?text=头像" alt="个人头像" id="avatar">
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">小天Felix</h1>
+                    <p class="profile-role">自媒体创作者</p>
+                    <p class="profile-desc">全网同名，专注于优质内容创作，分享生活与技术的美好</p>
+                </div>
+            </div>
+
+            <!-- 自媒体平台 -->
+            <section id="platforms" class="platforms-section">
+                <h2 class="section-title">
+                    <i class="fas fa-broadcast-tower"></i>
+                    我的自媒体平台
+                </h2>
+                <div class="platforms-grid">
+                    <a href="https://mp.weixin.qq.com" target="_blank" class="platform-card">
+                        <div class="platform-icon wechat">
+                            <i class="fab fa-weixin"></i>
+                        </div>
+                        <div class="platform-info">
+                            <h3>微信公众号</h3>
+                            <p>我的技术分享</p>
+                            <span class="platform-followers">关注者 1.2K</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://space.bilibili.com" target="_blank" class="platform-card">
+                        <div class="platform-icon bilibili">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="platform-info">
+                            <h3>哔哩哔哩</h3>
+                            <p>技术教程UP主</p>
+                            <span class="platform-followers">粉丝 2.8K</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://www.xiaohongshu.com" target="_blank" class="platform-card">
+                        <div class="platform-icon xiaohongshu">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="platform-info">
+                            <h3>小红书</h3>
+                            <p>生活分享博主</p>
+                            <span class="platform-followers">粉丝 490</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- 自制工具 -->
+            <section id="tools" class="tools-section">
+                <h2 class="section-title">
+                    <i class="fas fa-tools"></i>
+                    我的自制工具
+                </h2>
+                <div class="tools-grid">
+                    <a href="https://01xiaotian.github.io/tools/border-img/index.html" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3>图像边框水印</h3>
+                        </div>
+                        <p class="tool-desc">功能强大的在线计算工具，支持科学计算和单位转换</p>
+                        <div class="tool-stats">
+                            <span><i class="fas fa-eye"></i> 1.2K 访问</span>
+                            <span><i class="fas fa-star"></i> 4.8 评分</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://01xiaotian.github.io/tools/batch-websites.html" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3>网址批量打开器</h3>
+                        </div>
+                        <p class="tool-desc">批量打开众多网址，超级方便</p>
+                        <div class="tool-stats">
+                            <span><i class="fas fa-eye"></i> 856 访问</span>
+                            <span><i class="fas fa-star"></i> 4.6 评分</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://example.com/tool3" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <h3>二维码生成器</h3>
+                        </div>
+                        <p class="tool-desc">快速生成各种类型的二维码，支持批量处理</p>
+                        <div class="tool-stats">
+                            <span><i class="fas fa-eye"></i> 2.3K 访问</span>
+                            <span><i class="fas fa-star"></i> 4.9 评分</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://example.com/tool4" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">
+                                <i class="fas fa-compress-alt"></i>
+                            </div>
+                            <h3>图片压缩工具</h3>
+                        </div>
+                        <p class="tool-desc">在线图片压缩优化，保持质量的同时减小文件大小</p>
+                        <div class="tool-stats">
+                            <span><i class="fas fa-eye"></i> 1.8K 访问</span>
+                            <span><i class="fas fa-star"></i> 4.7 评分</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://example.com/tool5" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">
+                                <i class="fas fa-random"></i>
+                            </div>
+                            <h3>密码生成器</h3>
+                        </div>
+                        <p class="tool-desc">安全密码生成工具，可自定义长度和复杂度</p>
+                        <div class="tool-stats">
+                            <span><i class="fas fa-eye"></i> 1.5K 访问</span>
+                            <span><i class="fas fa-star"></i> 4.8 评分</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://example.com/tool6" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3>时间管理工具</h3>
+                        </div>
+                        <p class="tool-desc">番茄工作法计时器，帮助提高工作效率</p>
+                        <div class="tool-stats">
+                            <span><i class="fas fa-eye"></i> 967 访问</span>
+                            <span><i class="fas fa-star"></i> 4.5 评分</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 个人主页. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网址导航 - 我的收藏夹</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-compass"></i>
+                <span>网址导航</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">返回首页</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题和搜索 -->
+    <section class="nav-header">
+        <div class="container">
+            <h1 class="nav-title">网址导航</h1>
+            <p class="nav-subtitle">精心收集的优质网站和工具</p>
+            
+            <!-- 搜索框 -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="搜索网站名称或描述...">
+                    <button id="clearSearch" class="clear-btn" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 折叠式导航内容 -->
+    <section class="navigation-content">
+        <div class="container">
+            <div class="accordion-wrapper">
+                
+                <!-- 开发工具 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="development">
+                        <i class="fas fa-code"></i>
+                        <span>开发工具</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content" id="development">
+                        
+                        <!-- 代码托管 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="code-hosting">
+                                <i class="fab fa-git-alt"></i>
+                                <span>代码托管</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="code-hosting">
+                                <div class="nav-links-list">
+                                    <a href="https://github.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">GitHub</span>
+                                        <span class="link-desc">全球最大的代码托管平台</span>
+                                    </a>
+                                    <a href="https://gitlab.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">GitLab</span>
+                                        <span class="link-desc">DevOps生命周期工具</span>
+                                    </a>
+                                    <a href="https://gitee.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Gitee</span>
+                                        <span class="link-desc">国内代码托管平台</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 编辑器 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="editors">
+                                <i class="fas fa-edit"></i>
+                                <span>代码编辑器</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="editors">
+                                <div class="nav-links-list">
+                                    <a href="https://code.visualstudio.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">VS Code</span>
+                                        <span class="link-desc">微软开发的强大代码编辑器</span>
+                                    </a>
+                                    <a href="https://www.jetbrains.com/webstorm/" target="_blank" class="nav-link-item">
+                                        <span class="link-name">WebStorm</span>
+                                        <span class="link-desc">专业的JavaScript IDE</span>
+                                    </a>
+                                    <a href="https://atom.io" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Atom</span>
+                                        <span class="link-desc">GitHub开发的文本编辑器</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- API工具 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="api-tools">
+                                <i class="fas fa-plug"></i>
+                                <span>API工具</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="api-tools">
+                                <div class="nav-links-list">
+                                    <a href="https://postman.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Postman</span>
+                                        <span class="link-desc">API开发和测试工具</span>
+                                    </a>
+                                    <a href="https://insomnia.rest" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Insomnia</span>
+                                        <span class="link-desc">简洁的REST客户端</span>
+                                    </a>
+                                    <a href="https://swagger.io" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Swagger</span>
+                                        <span class="link-desc">API文档和设计工具</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设计资源 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="design">
+                        <i class="fas fa-palette"></i>
+                        <span>设计资源</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content" id="design">
+                        
+                        <!-- 设计工具 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="design-tools">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>设计工具</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="design-tools">
+                                <div class="nav-links-list">
+                                    <a href="https://figma.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Figma</span>
+                                        <span class="link-desc">协作式界面设计工具</span>
+                                    </a>
+                                    <a href="https://www.sketch.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Sketch</span>
+                                        <span class="link-desc">Mac平台UI设计工具</span>
+                                    </a>
+                                    <a href="https://canva.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Canva</span>
+                                        <span class="link-desc">在线设计工具</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 图片素材 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="images">
+                                <i class="fas fa-images"></i>
+                                <span>图片素材</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="images">
+                                <div class="nav-links-list">
+                                    <a href="https://unsplash.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Unsplash</span>
+                                        <span class="link-desc">免费高质量图片</span>
+                                    </a>
+                                    <a href="https://pixabay.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Pixabay</span>
+                                        <span class="link-desc">免费图片和视频素材</span>
+                                    </a>
+                                    <a href="https://pexels.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Pexels</span>
+                                        <span class="link-desc">免费摄影图片</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 配色工具 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="colors">
+                                <i class="fas fa-eye-dropper"></i>
+                                <span>配色工具</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="colors">
+                                <div class="nav-links-list">
+                                    <a href="https://coolors.co" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Coolors</span>
+                                        <span class="link-desc">配色方案生成器</span>
+                                    </a>
+                                    <a href="https://color.adobe.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Adobe Color</span>
+                                        <span class="link-desc">Adobe配色工具</span>
+                                    </a>
+                                    <a href="https://paletton.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Paletton</span>
+                                        <span class="link-desc">色彩搭配工具</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学习平台 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="learning">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>学习平台</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content" id="learning">
+                        
+                        <!-- 在线课程 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="courses">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <span>在线课程</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="courses">
+                                <div class="nav-links-list">
+                                    <a href="https://coursera.org" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Coursera</span>
+                                        <span class="link-desc">世界顶级大学课程</span>
+                                    </a>
+                                    <a href="https://udemy.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Udemy</span>
+                                        <span class="link-desc">技能学习平台</span>
+                                    </a>
+                                    <a href="https://www.imooc.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">慕课网</span>
+                                        <span class="link-desc">IT技能学习平台</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 技术文档 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="docs">
+                                <i class="fas fa-book"></i>
+                                <span>技术文档</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="docs">
+                                <div class="nav-links-list">
+                                    <a href="https://developer.mozilla.org" target="_blank" class="nav-link-item">
+                                        <span class="link-name">MDN Web Docs</span>
+                                        <span class="link-desc">Web开发权威文档</span>
+                                    </a>
+                                    <a href="https://stackoverflow.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Stack Overflow</span>
+                                        <span class="link-desc">程序员问答社区</span>
+                                    </a>
+                                    <a href="https://www.w3schools.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">W3Schools</span>
+                                        <span class="link-desc">Web技术教程</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 效率工具 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="productivity">
+                        <i class="fas fa-rocket"></i>
+                        <span>效率工具</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content" id="productivity">
+                        
+                        <!-- 项目管理 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="project-mgmt">
+                                <i class="fas fa-tasks"></i>
+                                <span>项目管理</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="project-mgmt">
+                                <div class="nav-links-list">
+                                    <a href="https://trello.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Trello</span>
+                                        <span class="link-desc">看板式项目管理</span>
+                                    </a>
+                                    <a href="https://asana.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Asana</span>
+                                        <span class="link-desc">团队协作管理工具</span>
+                                    </a>
+                                    <a href="https://notion.so" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Notion</span>
+                                        <span class="link-desc">全能工作空间</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 云存储 -->
+                        <div class="sub-accordion-item">
+                            <div class="sub-accordion-header" data-target="cloud-storage">
+                                <i class="fas fa-cloud"></i>
+                                <span>云存储</span>
+                                <i class="fas fa-chevron-right sub-accordion-icon"></i>
+                            </div>
+                            <div class="sub-accordion-content" id="cloud-storage">
+                                <div class="nav-links-list">
+                                    <a href="https://drive.google.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Google Drive</span>
+                                        <span class="link-desc">谷歌云存储服务</span>
+                                    </a>
+                                    <a href="https://dropbox.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">Dropbox</span>
+                                        <span class="link-desc">文件同步和共享</span>
+                                    </a>
+                                    <a href="https://pan.baidu.com" target="_blank" class="nav-link-item">
+                                        <span class="link-name">百度网盘</span>
+                                        <span class="link-desc">国内云存储服务</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 网址导航. <a href="index.html">返回首页</a></p>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
