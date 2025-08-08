@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片边框水印制作工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>图片边框水印制作工具</h1>
+        
+        <div class="upload-section">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <button id="uploadBtn" class="upload-btn">选择图片</button>
+            <span id="fileName" class="file-name"></span>
+        </div>
+
+        <div class="controls-section">
+            <div class="control-group">
+                <label for="blurRange">模糊程度:</label>
+                <input type="range" id="blurRange" min="0" max="20" value="5" step="0.5">
+                <span id="blurValue">5px</span>
+            </div>
+
+            <div class="control-group">
+                <label for="borderRange">边框大小:</label>
+                <input type="range" id="borderRange" min="10" max="100" value="30" step="5">
+                <span id="borderValue">30px</span>
+            </div>
+
+            <div class="control-group">
+                <label for="radiusRange">圆角大小:</label>
+                <input type="range" id="radiusRange" min="0" max="50" value="15" step="1">
+                <span id="radiusValue">15px</span>
+            </div>
+
+            <div class="control-group">
+                <label for="spacingRange">边框间距:</label>
+                <input type="range" id="spacingRange" min="0" max="50" value="10" step="1">
+                <span id="spacingValue">10px</span>
+            </div>
+
+            <div class="control-group">
+                <label for="scaleRange">图片缩放:</label>
+                <input type="range" id="scaleRange" min="0.5" max="1.5" value="0.8" step="0.05">
+                <span id="scaleValue">0.8</span>
+            </div>
+
+            <div class="control-group">
+                <label for="borderColor">边框颜色:</label>
+                <input type="color" id="borderColor" value="#ffffff">
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <div id="imageContainer" class="image-container">
+                <div class="placeholder">请选择一张图片开始制作</div>
+            </div>
+        </div>
+
+        <div class="action-section">
+            <button id="downloadBtn" class="download-btn" disabled>下载图片</button>
+            <button id="resetBtn" class="reset-btn">重置参数</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
