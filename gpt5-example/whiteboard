@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Online Whiteboard (Local)</title>
+  <style>
+    :root{
+      --ui-bg: rgba(255,255,255,.85);
+      --ui-stroke: rgba(0,0,0,.12);
+      --text:#1b1f23;
+      --accent:#2563eb;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{ margin:0; background:#f8fafc; color:var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+
+    /* Fullscreen stage */
+    .stage{ position:fixed; inset:0; display:grid; grid-template-rows:auto 1fr; }
+
+    /* Minimal top toolbar */
+    .toolbar{ display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; padding:.5rem .75rem; background:var(--ui-bg); border-bottom:1px solid var(--ui-stroke); backdrop-filter:saturate(1.1) blur(6px); z-index:2; }
+    .toolbar .left, .toolbar .right{ display:flex; align-items:center; gap:.5rem; }
+    .spacer{ flex:1 }
+
+    .btn{ all:unset; cursor:pointer; padding:.4rem .6rem; border-radius:10px; border:1px solid var(--ui-stroke); background:white; font-weight:700; box-shadow: 0 1px 0 rgba(0,0,0,.04);}
+    .btn:hover{ filter:brightness(1.03) }
+    .btn[aria-pressed="true"]{ background:#eef2ff; border-color:#c7d2fe; }
+    .danger{ background:#fff1f2; border-color:#fecdd3; }
+
+    .colors{ display:flex; gap:.3rem; padding:.2rem .4rem; border-radius:10px; border:1px solid var(--ui-stroke); background:white; }
+    .swatch{ width:26px; height:26px; border-radius:999px; border:1px solid rgba(0,0,0,.2); cursor:pointer; }
+    .swatch[aria-pressed="true"]{ outline:2px solid var(--accent); outline-offset:1px; }
+
+    .slider{ display:flex; align-items:center; gap:.4rem; padding:.2rem .5rem; border-radius:10px; border:1px solid var(--ui-stroke); background:white; }
+    input[type="range"]{ width:140px }
+
+    /* Canvases */
+    #board{ position:relative; isolation:isolate; }
+    canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+    #draw{ z-index:1; }
+  </style>
+</head>
+<body>
+  <div class="stage" role="application" aria-label="Online Whiteboard (local-only)">
+    <div class="toolbar" role="toolbar" aria-label="Drawing tools">
+      <div class="left">
+        <button id="tool-pen" class="btn" aria-pressed="true" aria-label="Pen (B)">Pen</button>
+        <button id="tool-eraser" class="btn" aria-pressed="false" aria-label="Eraser (E)">Eraser</button>
+        <div class="colors" role="group" aria-label="Color palette">
+          <button class="swatch" data-color="#111827" style="background:#111827" aria-pressed="true" aria-label="Black"></button>
+          <button class="swatch" data-color="#ef4444" style="background:#ef4444" aria-label="Red"></button>
+          <button class="swatch" data-color="#2563eb" style="background:#2563eb" aria-label="Blue"></button>
+          <button class="swatch" data-color="#16a34a" style="background:#16a34a" aria-label="Green"></button>
+          <button class="swatch" data-color="#f59e0b" style="background:#f59e0b" aria-label="Orange"></button>
+          <button class="swatch" data-color="#a855f7" style="background:#a855f7" aria-label="Purple"></button>
+          <button class="swatch" data-color="#eab308" style="background:#eab308" aria-label="Yellow"></button>
+          <button class="swatch" data-color="#f43f5e" style="background:#f43f5e" aria-label="Pink"></button>
+        </div>
+        <div class="slider" role="group" aria-label="Stroke size">
+          <label for="size" style="font-weight:700">Size</label>
+          <input id="size" type="range" min="1" max="40" value="8" />
+          <span id="sizeOut" aria-live="polite" style="font-variant-numeric:tabular-nums">8 px</span>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="right">
+        <button id="btn-save" class="btn" aria-label="Save as PNG (S)">Save PNG</button>
+        <button id="btn-clear" class="btn danger" aria-label="Clear board (C)">Clear</button>
+      </div>
+    </div>
+
+    <div id="board" aria-label="Drawing surface">
+      <canvas id="bg"></canvas>
+      <canvas id="draw"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // ====== Setup ======
+    const board = document.getElementById('board');
+    const bg = document.getElementById('bg');
+    const draw = document.getElementById('draw');
+    const bctx = bg.getContext('2d');
+    const dctx = draw.getContext('2d');
+
+    const sizeEl = document.getElementById('size');
+    const sizeOut = document.getElementById('sizeOut');
+    const toolPen = document.getElementById('tool-pen');
+    const toolEraser = document.getElementById('tool-eraser');
+    const saveBtn = document.getElementById('btn-save');
+    const clearBtn = document.getElementById('btn-clear');
+
+    let tool = 'pen';
+    let color = '#111827';
+    let size = +sizeEl.value;
+
+    function setTool(t){
+      tool = t;
+      toolPen.setAttribute('aria-pressed', t==='pen');
+      toolEraser.setAttribute('aria-pressed', t==='eraser');
+    }
+
+    toolPen.addEventListener('click', ()=> setTool('pen'));
+    toolEraser.addEventListener('click', ()=> setTool('eraser'));
+
+    // Colors
+    const swatches = Array.from(document.querySelectorAll('.swatch'));
+    function setColor(c){ color = c; swatches.forEach(s=>s.setAttribute('aria-pressed', s.dataset.color===c)); if(tool==='eraser') setTool('pen'); }
+    swatches.forEach(s=> s.addEventListener('click', ()=> setColor(s.dataset.color)) );
+
+    // Size
+    sizeEl.addEventListener('input', ()=>{ size = +sizeEl.value; sizeOut.textContent = `${size} px`; });
+
+    // DPI-resize while preserving content
+    function fit(){
+      const dpr = window.devicePixelRatio || 1;
+      const rect = board.getBoundingClientRect();
+      [bg, draw].forEach(cv=>{
+        const prev = document.createElement('canvas');
+        prev.width = cv.width; prev.height = cv.height; prev.getContext('2d').drawImage(cv,0,0);
+        cv.width = Math.floor(rect.width * dpr);
+        cv.height = Math.floor(rect.height * dpr);
+        cv.style.width = rect.width + 'px';
+        cv.style.height = rect.height + 'px';
+        const cctx = cv.getContext('2d');
+        cctx.setTransform(dpr,0,0,dpr,0,0);
+        cctx.drawImage(prev,0,0, prev.width/dpr, prev.height/dpr);
+      });
+      // if bg is new (first time), paint white so export isn't transparent
+      if (!fit._init){ bctx.fillStyle = '#ffffff'; bctx.fillRect(0,0, bg.width, bg.height); fit._init=true; }
+    }
+    const ro = new ResizeObserver(fit); ro.observe(board);
+
+    // ====== Drawing (multi-pointer, local-only) ======
+    const active = new Map(); // pointerId -> {x,y}
+
+    function startDraw(e){
+      e.preventDefault();
+      draw.setPointerCapture(e.pointerId);
+      const p = pos(e);
+      active.set(e.pointerId, p);
+      strokeTo(e, p, true);
+    }
+    function moveDraw(e){ if (!active.has(e.pointerId)) return; strokeTo(e, pos(e)); }
+    function endDraw(e){ active.delete(e.pointerId); }
+
+    draw.addEventListener('pointerdown', startDraw);
+    draw.addEventListener('pointermove', moveDraw);
+    window.addEventListener('pointerup', endDraw);
+    window.addEventListener('pointercancel', endDraw);
+
+    function pos(e){
+      const rect = draw.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top, p: e.pressure || 0.5, type: e.pointerType };
+    }
+
+    function strokeTo(e, p, begin=false){
+      const ctx = (tool==='eraser') ? bctx : bctx; // draw committed strokes on bg layer
+      ctx.save();
+      ctx.globalCompositeOperation = (tool==='eraser') ? 'destination-out' : 'source-over';
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      const pressure = (p.type==='pen') ? (p.p || 0.5) : 1.0;
+      const w = size * (tool==='eraser' ? 1.2 : 1.0) * pressure;
+      ctx.strokeStyle = (tool==='eraser') ? 'rgba(0,0,0,1)' : color;
+      ctx.lineWidth = w;
+
+      const prev = active.get(e.pointerId) || p;
+      ctx.beginPath();
+      ctx.moveTo(prev.x, prev.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.restore();
+
+      active.set(e.pointerId, p);
+    }
+
+    // ====== Clear & Save ======
+    clearBtn.addEventListener('click', ()=>{
+      bctx.save();
+      bctx.setTransform(1,0,0,1,0,0); // ensure full wipe
+      bctx.clearRect(0,0,bg.width,bg.height);
+      bctx.restore();
+      // repaint white background for export
+      bctx.fillStyle = '#ffffff'; bctx.fillRect(0,0, bg.width, bg.height);
+    });
+
+    saveBtn.addEventListener('click', ()=>{
+      // Merge draw layer onto bg just in case (draw layer is unused between strokes, but safe)
+      bctx.drawImage(draw,0,0, bg.width, bg.height);
+      bg.toBlob((blob)=>{
+        const a = document.createElement('a');
+        const ts = new Date().toISOString().replace(/[:.]/g,'-');
+        a.download = `whiteboard-${ts}.png`;
+        a.href = URL.createObjectURL(blob);
+        a.click();
+        setTimeout(()=> URL.revokeObjectURL(a.href), 1000);
+      }, 'image/png');
+    });
+
+    // ====== Keyboard shortcuts ======
+    window.addEventListener('keydown', (e)=>{
+      const k = e.key.toLowerCase();
+      if (k==='b') setTool('pen');
+      else if (k==='e') setTool('eraser');
+      else if (k==='c') clearBtn.click();
+      else if (k==='s'){ e.preventDefault(); saveBtn.click(); }
+    });
+
+    // First layout
+    fit();
+  </script>
+</body>
+</html>
