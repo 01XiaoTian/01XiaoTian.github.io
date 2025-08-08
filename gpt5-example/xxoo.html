@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SPQR Tic Tac Toe</title>
+  <!-- Google Fonts allowed by constraints -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --gold:#d4af37;           /* Roman gold */
+      --gold-2:#f4d267;         /* lighter gold */
+      --stone:#ece9e4;          /* marble light */
+      --ink:#1a1a1f;
+      --muted:#667085;
+      --accent:#9b1c1c;         /* legion red */
+      --shadow: 0 14px 40px rgba(0,0,0,.18);
+      --radius:16px;
+      --board-gap:1.6vmin;      /* vmin-based spacing */
+      --cell-r: 2.2vmin;        /* rounded corners */
+      --board-size: min(90vmin, 96vw);
+      --glyph-scale: 18vmin;    /* default scalable glyph size */
+      --panel-bg: rgba(255,255,255,.75);
+      --panel-stroke: rgba(0,0,0,.08);
+    }
+
+    /* Themes */
+    body.theme-day{
+      --bg: #f4f1ec;
+      --marble-1: #f5f2ee; --marble-2:#ece9e4; --marble-vein:#cfc8bb;
+      --ink:#1b1a1f; --panel-bg: rgba(255,255,255,.75); --panel-stroke: rgba(0,0,0,.08);
+    }
+    body.theme-night{
+      --bg: #0f1016;
+      --marble-1: #171821; --marble-2:#10121a; --marble-vein:#2a2e3f;
+      --ink:#f0f3ff; --panel-bg: rgba(16,18,26,.72); --panel-stroke: rgba(255,255,255,.08);
+    }
+    body.theme-legion{
+      --bg: #2b0f12;
+      --marble-1: #3a1518; --marble-2:#2b0f12; --marble-vein:#5b2a2f;
+      --ink:#fff7e6; --panel-bg: rgba(43,15,18,.72); --panel-stroke: rgba(255,255,255,.08);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; color:var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(120vmin 70vmin at 80% -10%, rgba(212,175,55,.12), transparent 55%),
+        radial-gradient(90vmin 60vmin at -20% 110%, rgba(155,28,28,.12), transparent 60%),
+        /* subtle Colosseum silhouette (inline SVG data URL) */
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" opacity="0.06"><g fill="%23ffffff"><path d="M60 320h1080v20H60z"/><path d="M120 320h960c20-100-20-200-90-230-100-45-250-20-380-20s-280-25-380 20c-70 30-110 130-90 230z"/></g><g fill="%23000000" opacity="0.1"><rect x="160" y="250" width="40" height="50"/><rect x="230" y="250" width="40" height="50"/><rect x="300" y="250" width="40" height="50"/><rect x="370" y="250" width="40" height="50"/><rect x="440" y="250" width="40" height="50"/><rect x="510" y="250" width="40" height="50"/><rect x="580" y="250" width="40" height="50"/><rect x="650" y="250" width="40" height="50"/><rect x="720" y="250" width="40" height="50"/><rect x="790" y="250" width="40" height="50"/><rect x="860" y="250" width="40" height="50"/><rect x="930" y="250" width="40" height="50"/></g></svg>') bottom center no-repeat,
+        /* faux marble */
+        linear-gradient(135deg, var(--marble-1), var(--marble-2));
+      background-attachment: fixed, fixed, fixed, fixed;
+    }
+
+    .wrap{ min-height:100%; display:flex; flex-direction:column; align-items:center; gap:1.2rem; padding: clamp(10px, 2vmin, 24px); }
+
+    /* Crest */
+    .crest{ display:flex; align-items:center; gap:.8rem; margin-top:.2rem; }
+    .crest svg{ width:74px; height:42px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.18)); }
+    .spqr{ font-family: Cinzel, serif; font-weight:900; letter-spacing:.2rem; font-size:1.2rem; color:var(--ink); }
+
+    /* Top bar */
+    .topbar{ display:flex; gap:.8rem; padding:.6rem; border-radius:var(--radius); background:var(--panel-bg); border:1px solid var(--panel-stroke); box-shadow: var(--shadow); }
+    .btn{ all:unset; cursor:pointer; padding:.6rem .9rem; border-radius:12px; font-weight:800; color:var(--ink);
+      background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.55));
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow: 0 2px 0 rgba(0,0,0,.1);
+      transition: transform .06s ease, filter .15s ease, box-shadow .2s ease;
+    }
+    .btn:hover{ filter: brightness(1.04); }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 0 0 rgba(0,0,0,0); }
+
+    /* Banner (non-overlapping) */
+    .banner{ min-height: 2.2rem; display:grid; place-items:center; }
+    .banner .msg{ padding:.4rem .8rem; border-radius:999px; font-weight:800; font-family: Cinzel, serif; letter-spacing:.06em; color:#1d1605;
+      background: linear-gradient(180deg, var(--gold-2), var(--gold)); border:1px solid #b28d2b; box-shadow:0 8px 22px rgba(212,175,55,.25);
+      display:none;
+    }
+    .banner .msg.show{ display:inline-block; }
+
+    /* Scoreboard */
+    .score{ display:flex; gap:.6rem; align-items:center; background:var(--panel-bg); border:1px solid var(--panel-stroke); border-radius:var(--radius); padding:.5rem .8rem; box-shadow: var(--shadow); }
+    .chip{ display:flex; gap:.5rem; align-items:center; padding:.35rem .6rem; border-radius:999px; background:rgba(0,0,0,.06); font-weight:800; }
+
+    /* Board */
+    .board-wrap{ position:relative; width:var(--board-size); height:var(--board-size); }
+    .board{ display:grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: var(--board-gap);
+      width:100%; height:100%; padding: var(--board-gap);
+      background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.5)); border-radius: calc(var(--cell-r) + 1.2vmin);
+      border:1px solid var(--panel-stroke); box-shadow: var(--shadow);
+    }
+    .cell{ display:grid; place-items:center; user-select:none; border-radius: var(--cell-r); position:relative; cursor:pointer; outline:none;
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.6)); border:1px solid rgba(0,0,0,.08);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.7), inset 0 -2px 0 rgba(0,0,0,.06);
+      transition: transform .06s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .cell:hover{ filter: brightness(1.02); }
+    .cell:active{ transform: translateY(1px) scale(.99); }
+    .cell[aria-disabled="true"]{ cursor:default; }
+
+    .glyph{ font-family: Cinzel, serif; font-weight:900; font-size: var(--glyph-scale); line-height: 1; transform: translateY(-1.2vmin); }
+    .glyph.alt{ font-family: "Apple Color Emoji","Segoe UI Emoji",Inter,system-ui; transform: none; }
+
+    /* Win highlight */
+    .cell.win{
+      background: radial-gradient(60% 60% at 50% 40%, rgba(244,210,103,.9), rgba(212,175,55,.7) 60%, rgba(212,175,55,.4) 85%, rgba(255,255,255,.2) 100%);
+      box-shadow: 0 14px 40px rgba(212,175,55,.45), inset 0 0 0 3px #b28d2b;
+    }
+
+    /* Confetti canvas */
+    #confetti{ position:absolute; inset:0; pointer-events:none; }
+
+    /* Dialog (Customize) */
+    dialog{ border:none; padding:0; border-radius: 16px; background: var(--panel-bg); color: var(--ink); width:min(92vw, 680px); }
+    .dlg{ padding: 14px; border:1px solid var(--panel-stroke); border-radius: 16px; box-shadow: var(--shadow); }
+    .dlg h3{ margin:.2rem 0 .6rem; font-family: Cinzel, serif; }
+    .opts{ display:grid; grid-template-columns: 1fr; gap: .8rem; }
+    .group{ background: rgba(0,0,0,.05); border:1px solid var(--panel-stroke); border-radius:12px; padding: .6rem .8rem; }
+    .group legend{ padding: 0 .2rem; font-weight:800; }
+    .row{ display:flex; flex-wrap:wrap; gap:.6rem 1rem; align-items:center; }
+    .dlg .actions{ display:flex; justify-content:flex-end; gap:.6rem; margin-top:.6rem; }
+    .btn-ghost{ all:unset; cursor:pointer; padding:.5rem .8rem; border-radius:10px; background:rgba(0,0,0,.06); font-weight:800; }
+    .btn-primary{ all:unset; cursor:pointer; padding:.5rem .9rem; border-radius:10px; background: linear-gradient(180deg, var(--gold-2), var(--gold)); border:1px solid #b28d2b; font-weight:800; color:#1d1605; }
+    .hint{ color:var(--muted); font-size:.9rem; }
+
+    /* Reduced motion: tone down transitions */
+    @media (prefers-reduced-motion: reduce){
+      .cell, .btn{ transition: none; }
+    }
+  </style>
+</head>
+<body class="theme-day">
+  <div class="wrap">
+    <!-- Crest -->
+    <div class="crest" aria-hidden="true">
+      <svg viewBox="0 0 200 120" role="img" aria-label="SPQR Crest"><defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d267"/><stop offset="1" stop-color="#d4af37"/></linearGradient>
+      </defs>
+        <g fill="url(#g)" stroke="#b28d2b" stroke-width="2">
+          <text x="100" y="65" text-anchor="middle" font-family="Cinzel" font-size="44" font-weight="900">SPQR</text>
+          <!-- laurel -->
+          <path d="M25 80c20 30 60 40 75 25" fill="none"/>
+          <path d="M175 80c-20 30-60 40-75 25" fill="none"/>
+        </g>
+      </svg>
+      <div class="spqr">Senatus Populusque Romanus</div>
+    </div>
+
+    <!-- Top bar: only 3 buttons -->
+    <div class="topbar" role="toolbar" aria-label="Game controls">
+      <button id="btnNew" class="btn" aria-label="Start a new round">New Round</button>
+      <button id="btnCustomize" class="btn" aria-haspopup="dialog" aria-controls="customize">Customize</button>
+      <button id="btnReset" class="btn" aria-label="Reset scores">Reset Scores</button>
+    </div>
+
+    <!-- Non-overlapping victory banner -->
+    <div class="banner" aria-live="polite"><div id="bannerMsg" class="msg" role="status" aria-atomic="true"></div></div>
+
+    <!-- Scoreboard -->
+    <div class="score" aria-label="Scoreboard">
+      <div class="chip">X: <span id="sx">0</span></div>
+      <div class="chip">O: <span id="so">0</span></div>
+      <div class="chip">Draws: <span id="sd">0</span></div>
+      <div id="turn" class="chip" aria-live="polite">Turn: X</div>
+    </div>
+
+    <!-- Board -->
+    <div class="board-wrap">
+      <div id="grid" class="board" role="grid" aria-label="Tic Tac Toe board" aria-describedby="status">
+        <!-- 9 cells -->
+        <button class="cell" data-idx="0" role="gridcell" aria-colindex="1" aria-rowindex="1" aria-label="Row 1 Column 1 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="1" role="gridcell" aria-colindex="2" aria-rowindex="1" aria-label="Row 1 Column 2 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="2" role="gridcell" aria-colindex="3" aria-rowindex="1" aria-label="Row 1 Column 3 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="3" role="gridcell" aria-colindex="1" aria-rowindex="2" aria-label="Row 2 Column 1 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="4" role="gridcell" aria-colindex="2" aria-rowindex="2" aria-label="Row 2 Column 2 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="5" role="gridcell" aria-colindex="3" aria-rowindex="2" aria-label="Row 2 Column 3 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="6" role="gridcell" aria-colindex="1" aria-rowindex="3" aria-label="Row 3 Column 1 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="7" role="gridcell" aria-colindex="2" aria-rowindex="3" aria-label="Row 3 Column 2 empty" aria-disabled="false"></button>
+        <button class="cell" data-idx="8" role="gridcell" aria-colindex="3" aria-rowindex="3" aria-label="Row 3 Column 3 empty" aria-disabled="false"></button>
+      </div>
+      <canvas id="confetti" width="10" height="10" aria-hidden="true"></canvas>
+    </div>
+
+    <!-- Live status for screen readers -->
+    <div id="status" class="hint" role="status" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <!-- Customize dialog -->
+  <dialog id="customize">
+    <form method="dialog" class="dlg" id="customForm" aria-labelledby="customTitle">
+      <h3 id="customTitle">Customize</h3>
+      <div class="opts">
+        <fieldset class="group">
+          <legend>Theme</legend>
+          <div class="row">
+            <label><input type="radio" name="theme" value="day" checked> Marble Day</label>
+            <label><input type="radio" name="theme" value="night"> Night</label>
+            <label><input type="radio" name="theme" value="legion"> Legion</label>
+          </div>
+        </fieldset>
+        <fieldset class="group">
+          <legend>Glyphs</legend>
+          <div class="row">
+            <label><input type="radio" name="glyphs" value="std" checked> Standard X / O</label>
+            <label><input type="radio" name="glyphs" value="alt"> Gladius / Laurel</label>
+          </div>
+        </fieldset>
+        <fieldset class="group">
+          <legend>Mode</legend>
+          <div class="row">
+            <label><input type="radio" name="mode" value="2p" checked> 2‑Player</label>
+            <label><input type="radio" name="mode" value="ai"> vs AI</label>
+          </div>
+          <div class="hint">In vs AI mode you play <b>X</b>. Choose <b>First move: O</b> to let the AI start.</div>
+        </fieldset>
+        <fieldset class="group">
+          <legend>First move</legend>
+          <div class="row">
+            <label><input type="radio" name="first" value="X" checked> X</label>
+            <label><input type="radio" name="first" value="O"> O</label>
+          </div>
+        </fieldset>
+        <fieldset class="group">
+          <legend>AI discipline</legend>
+          <div class="row">
+            <label><input type="radio" name="ai" value="perfect" checked> Perfect</label>
+            <label><input type="radio" name="ai" value="pragmatic"> Pragmatic</label>
+            <label><input type="radio" name="ai" value="reckless"> Reckless</label>
+          </div>
+        </fieldset>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" value="cancel">Cancel</button>
+        <button id="saveCustom" class="btn-primary" value="default">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const gridEl = document.getElementById('grid');
+    const cells = Array.from(document.querySelectorAll('.cell'));
+    const bannerMsg = document.getElementById('bannerMsg');
+    const statusEl = document.getElementById('status');
+    const turnEl = document.getElementById('turn');
+    const confettiCanvas = document.getElementById('confetti');
+    const ctx = confettiCanvas.getContext('2d');
+
+    const scores = { X:0, O:0, D:0 };
+    const sx = document.getElementById('sx');
+    const so = document.getElementById('so');
+    const sd = document.getElementById('sd');
+
+    let board = Array(9).fill(null);
+    let current = 'X';
+    let settings = {
+      theme: 'day', glyphs: 'std', mode: '2p', first: 'X', ai: 'perfect'
+    };
+
+    // Local storage for scores
+    (function loadScores(){
+      try{ const s = JSON.parse(localStorage.getItem('spqr_ttt_scores')); if (s) { scores.X=s.X||0; scores.O=s.O||0; scores.D=s.D||0; } }catch{}
+      updateScores();
+    })();
+
+    function persistScores(){ localStorage.setItem('spqr_ttt_scores', JSON.stringify(scores)); }
+
+    // Buttons
+    document.getElementById('btnReset').addEventListener('click', ()=>{ scores.X=0;scores.O=0;scores.D=0; updateScores(); persistScores(); announce('Scores reset.'); });
+    document.getElementById('btnNew').addEventListener('click', ()=> newRound());
+    const dlg = document.getElementById('customize');
+    document.getElementById('btnCustomize').addEventListener('click', ()=>{ dlg.showModal(); });
+    document.getElementById('saveCustom').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const form = new FormData(document.getElementById('customForm'));
+      settings.theme = form.get('theme');
+      settings.glyphs = form.get('glyphs');
+      settings.mode = form.get('mode');
+      settings.first = form.get('first');
+      settings.ai = form.get('ai');
+      applyTheme();
+      dlg.close();
+      newRound();
+    });
+
+    function applyTheme(){
+      document.body.classList.remove('theme-day','theme-night','theme-legion');
+      document.body.classList.add('theme-'+settings.theme);
+    }
+
+    function glyphFor(mark){
+      if (settings.glyphs==='alt') return mark==='X' ? '🗡' : '🌿';
+      return mark==='X' ? '✕' : '◯';
+    }
+
+    function render(){
+      cells.forEach((cell,i)=>{
+        cell.classList.remove('win');
+        cell.setAttribute('aria-disabled', board[i] ? 'true':'false');
+        cell.innerHTML = board[i] ? `<span class="glyph ${settings.glyphs==='alt'?'alt':''}" aria-hidden="true">${glyphFor(board[i])}</span>` : '';
+        const r = Math.floor(i/3)+1, c = (i%3)+1;
+        const label = `Row ${r} Column ${c} ${board[i]?board[i]:'empty'}`;
+        cell.setAttribute('aria-label', label);
+      });
+      turnEl.textContent = `Turn: ${current}`;
+    }
+
+    function announce(msg){ statusEl.textContent = msg; }
+
+    // NEW: ensure AI moves immediately when it's O's turn (e.g., First move: O)
+    function maybeAIMove(){
+      if (settings.mode!== 'ai') return;
+      if (current !== 'O') return; // Human plays X; AI is O
+      if (getWinner(board)) return; // no moves if already finished
+      setTimeout(()=>{
+        const idx = aiMove();
+        if (idx!=null){
+          board[idx]='O';
+          render();
+          const w2=getWinner(board);
+          if(w2){ endGame(w2); announce(w2.w==='D'?'Game drawn.':`${w2.w} wins!`); }
+          else { current='X'; announce('X to move.'); }
+        }
+      }, 120);
+    }
+
+    function newRound(){
+      stopConfetti();
+      board.fill(null); current = settings.first;
+      bannerMsg.classList.remove('show'); bannerMsg.textContent='';
+      render();
+      announce(`${current} to move.`);
+      if (settings.mode==='ai') maybeAIMove();
+    }
+
+    function updateScores(){ sx.textContent=scores.X; so.textContent=scores.O; sd.textContent=scores.D; }
+
+    // Win detection
+    const LINES = [ [0,1,2],[3,4,5],[6,7,8], [0,3,6],[1,4,7],[2,5,8], [0,4,8],[2,4,6] ];
+    function getWinner(b){
+      for (const [a,b2,c] of LINES){
+        if (b[a] && b[a]===b[b2] && b[a]===b[c]) return {w:b[a], line:[a,b2,c]};
+      }
+      if (b.every(Boolean)) return {w:'D', line:null};
+      return null;
+    }
+
+    // Minimax with optional handicaps
+    function minimax(b, player){
+      const winner = getWinner(b);
+      if (winner){
+        if (winner.w==='D') return {score:0};
+        return {score: winner.w===player ? 1 : -1};
+      }
+      const me = player; const opp = me==='X'?'O':'X';
+      let best = {score:-Infinity, idx:null};
+      for (let i=0;i<9;i++){
+        if (!b[i]){
+          b[i]=me;
+          const res = minimaxOpp(b, me, opp);
+          if (res.score>best.score){ best={score:res.score, idx:i}; }
+          b[i]=null;
+        }
+      }
+      return best;
+    }
+    function minimaxOpp(b, me, opp){
+      const winner = getWinner(b);
+      if (winner){
+        if (winner.w==='D') return {score:0};
+        return {score: winner.w===me ? 1 : -1};
+      }
+      let best = {score:Infinity, idx:null};
+      for (let i=0;i<9;i++){
+        if (!b[i]){
+          b[i]=opp;
+          const res = minimax(b, me);
+          if (res.score<best.score){ best={score:res.score, idx:i}; }
+          b[i]=null;
+        }
+      }
+      return best;
+    }
+
+    function aiMove(){
+      // AI plays the opposite of the human (human is X in this design)
+      const aiMark = 'O';
+      // Difficulty tweaks
+      if (settings.ai==='reckless'){
+        const empty = board.map((v,i)=>v?null:i).filter(v=>v!==null);
+        return empty[Math.floor(Math.random()*empty.length)];
+      }
+      if (settings.ai==='pragmatic'){
+        // 30% chance to pick random among available; otherwise pick best
+        if (Math.random() < 0.3){
+          const empty = board.map((v,i)=>v?null:i).filter(v=>v!==null);
+          return empty[Math.floor(Math.random()*empty.length)];
+        }
+      }
+      const best = minimax(board.slice(), aiMark);
+      return best.idx;
+    }
+
+    function endGame(winner){
+      if (winner.w==='D'){ scores.D++; bannerMsg.textContent = 'Draw — Honor to both sides.'; }
+      else { scores[winner.w]++; bannerMsg.textContent = `${winner.w} triumphs!`; }
+      persistScores(); updateScores();
+      if (winner.line){ winner.line.forEach(i=> cells[i].classList.add('win')); }
+      bannerMsg.classList.add('show');
+      turnEl.textContent = '—';
+      startConfetti();
+    }
+
+    function place(i){
+      if (board[i] || getWinner(board)) return;
+      board[i] = current; render();
+      const w = getWinner(board);
+      if (w){ endGame(w); announce(w.w==='D'?'Game drawn.':`${w.w} wins!`); return; }
+      current = current==='X'?'O':'X';
+      announce(`${current} to move.`);
+      if (settings.mode==='ai' && current==='O'){
+        setTimeout(()=>{
+          const idx = aiMove();
+          if (idx!=null){
+            board[idx]='O';
+            render();
+            const w2=getWinner(board);
+            if(w2){ endGame(w2); announce(w2.w==='D'?'Game drawn.':`${w2.w} wins!`); }
+            else { current='X'; announce('X to move.'); }
+          }
+        }, 100);
+      }
+    }
+
+    // Click/touch
+    cells.forEach((c)=> c.addEventListener('click', ()=>{ const i=+c.dataset.idx; place(i); c.focus(); }));
+
+    // Keyboard navigation within grid
+    gridEl.addEventListener('keydown', (e)=>{
+      const active = document.activeElement.closest('.cell');
+      let idx = active? +active.dataset.idx : 0;
+      if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)) e.preventDefault();
+      const row = Math.floor(idx/3), col = idx%3;
+      if (e.key==='ArrowLeft') idx = row*3 + Math.max(0, col-1);
+      if (e.key==='ArrowRight') idx = row*3 + Math.min(2, col+1);
+      if (e.key==='ArrowUp') idx = Math.max(0, idx-3);
+      if (e.key==='ArrowDown') idx = Math.min(8, idx+3);
+      if (e.key==='Home') idx = row*3;
+      if (e.key==='End') idx = row*3+2;
+      if (idx!==undefined && idx>=0 && idx<=8){ cells[idx].focus(); }
+      if (e.key==='Enter' || e.key===' '){ place(+document.activeElement.dataset.idx); }
+    });
+
+    // Confetti (canvas-only, respects reduced motion)
+    let confettiId=null, confettiParts=[]; const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function startConfetti(){
+      if (reduceMotion) return;
+      const rect = gridEl.getBoundingClientRect();
+      const dpr = window.devicePixelRatio||1;
+      confettiCanvas.width = Math.floor(rect.width*dpr);
+      confettiCanvas.height = Math.floor(rect.height*dpr);
+      confettiCanvas.style.width = rect.width+'px';
+      confettiCanvas.style.height = rect.height+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      confettiParts = Array.from({length:160}, ()=>({
+        x: Math.random()*rect.width,
+        y: -10 - Math.random()*40,
+        vx: -40+Math.random()*80,
+        vy: 60+Math.random()*140,
+        size: 4+Math.random()*6,
+        rot: Math.random()*Math.PI,
+        vr: -0.2+Math.random()*0.4,
+        color: Math.random()<0.5? '#d4af37' : (Math.random()<0.5? '#b28d2b' : '#9b1c1c')
+      }));
+      const t0 = performance.now();
+      cancelAnimationFrame(confettiId);
+      (function tick(now){
+        const dt = Math.min(0.033, (now-(tick.t||now))/1000); tick.t=now;
+        ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+        confettiParts.forEach(p=>{ p.vy+= 30*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle=p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size); ctx.restore(); });
+        confettiParts = confettiParts.filter(p=> p.y < confettiCanvas.height+20);
+        if (now - t0 < 3000 && confettiParts.length){ confettiId = requestAnimationFrame(tick); }
+      })(t0);
+    }
+    function stopConfetti(){ cancelAnimationFrame(confettiId); ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height); }
+
+    // Resize handling keeps board square and confetti canvas aligned
+    window.addEventListener('resize', ()=>{ stopConfetti(); });
+
+    // Kickoff
+    applyTheme();
+    render();
+    announce('X to move. Use mouse, touch, or keyboard arrows to select a cell; press Enter to place.');
+
+    // ----------------------------
+    // Minimal self-tests (console)
+    // ----------------------------
+    (function selfTests(){
+      function assert(cond, msg){ if(cond){ console.log('✅', msg); } else { console.error('❌', msg); } }
+      // Test 1: winner row
+      let b = [ 'X','X','X', null,null,null, null,null,null ];
+      let w = getWinner(b); assert(w && w.w==='X' && JSON.stringify(w.line)==='[0,1,2]', 'getWinner detects top row X');
+      // Test 2: draw
+      b = ['X','O','X','X','O','O','O','X','X'];
+      w = getWinner(b); assert(w && w.w==='D', 'getWinner detects draw');
+      // Test 3: minimax blocks imminent win (O should block at index 2)
+      b = ['X','X',null, 'O',null,null, null,null,null];
+      let res = minimax(b.slice(), 'O');
+      assert(res && res.idx===2, 'minimax chooses blocking move at 2');
+      // Test 4: minimax returns a valid index on empty board
+      b = Array(9).fill(null); res = minimax(b.slice(), 'O');
+      assert(res && res.idx>=0 && res.idx<=8, 'minimax returns a valid first move');
+    })();
+  </script>
+</body>
+</html>
